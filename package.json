@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "mastra dev",
     "build": "mastra build",
-    "start": "mastra start"
+    "start": "mastra start",
+    "rag:ingest": "tsx src/mastra/rag/ingest.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,13 +20,18 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.10",
     "@mastra/core": "^1.0.4",
-    "@mastra/libsql": "^1.0.0",
+    "@mastra/evals": "^1.0.0",
     "@mastra/memory": "^1.0.0",
+    "@mastra/observability": "^1.0.0",
+    "@mastra/pg": "^1.0.0",
+    "@mastra/rag": "^1.0.0",
+    "ai": "^3.2.50",
+    "mastra": "^1.0.1",
     "zod": "^4.3.5"
   },
   "devDependencies": {
     "@types/node": "^25.0.9",
-    "mastra": "^1.0.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.9.3"
   }
 }

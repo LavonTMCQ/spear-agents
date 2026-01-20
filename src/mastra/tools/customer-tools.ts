@@ -1,5 +1,6 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
+import { formatRagContext, retrieveKnowledge } from "../rag/retrieval";
 
 const SPEAR_API_URL = process.env.SPEAR_API_URL || "https://www.spear-global.com/api";
 const SPEAR_API_KEY = process.env.SPEAR_API_KEY || "";
@@ -303,5 +304,39 @@ export const sendPasswordReset = createTool({
     } catch (error) {
       return { success: false, message: String(error) };
     }
+  },
+});
+
+export const searchKnowledgeBase = createTool({
+  id: "searchKnowledgeBase",
+  description: "Search the SPEAR knowledge base for policies, runbooks, and troubleshooting steps",
+  inputSchema: z.object({
+    query: z.string().min(3).describe("Natural language search query"),
+    topK: z.number().min(1).max(10).optional().describe("Number of results to return"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    context: z.string(),
+    results: z.array(
+      z.object({
+        score: z.number().optional(),
+        source: z.string().optional(),
+        text: z.string(),
+      })
+    ),
+  }),
+  execute: async ({ query, topK }) => {
+    const results = await retrieveKnowledge(query, { topK });
+    const formatted = formatRagContext(results, topK ?? undefined);
+
+    return {
+      success: results.length > 0,
+      context: formatted,
+      results: results.map((result) => ({
+        score: result.score,
+        source: (result.metadata?.source || result.metadata?.path || "kb") as string,
+        text: (result.metadata?.text || "").toString(),
+      })),
+    };
   },
 });

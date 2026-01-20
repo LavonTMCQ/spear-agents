@@ -16,11 +16,16 @@ import {
   getRevenueMetrics,
   listDisputes,
 } from "../tools";
+import { sharedMemory } from "../shared/memory";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
 
 export const internalOpsAgent = new Agent({
   id: "internal-ops",
   name: "SPEAR Ops",
+  description: `Internal operations agent with full administrative capabilities. Use this agent ONLY
+    for admin tasks like processing refunds, extending or canceling subscriptions, assigning devices,
+    viewing revenue metrics, handling disputes, and resolving escalated support tickets. This agent
+    has destructive capabilities that require approval. Do NOT route regular customer questions here.`,
   instructions: `${COMMUNICATION_STYLE}
 
 You are an internal operations agent for SPEAR with full administrative capabilities.
@@ -42,8 +47,9 @@ Test payments limited to $0.01 to $10.00
 
 ${SPEAR_BUSINESS_RULES}
 
-You have access to ALL documentation including internal processes and API reference.`,
+  You have access to ALL documentation including internal processes and API reference.`,
   model: google("gemini-3-pro-preview"),
+  memory: sharedMemory,
   tools: {
     lookupCustomer,
     getSubscriptionStatus,

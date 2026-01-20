@@ -8,12 +8,20 @@ import {
   checkRefundEligibility,
   createSupportTicket,
   sendPasswordReset,
+  searchKnowledgeBase,
 } from "../tools";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
+import { sharedMemory } from "../shared/memory";
+import { getSupportScorers } from "../scorers";
 
 export const customerSupportAgent = new Agent({
   id: "customer-support",
   name: "SPEAR Support",
+  description: `Handles customer support inquiries for SPEAR platform. Use this agent when users
+    ask about their accounts, subscriptions, devices, billing issues, password resets,
+    troubleshooting device connections, or need help with existing service. This agent
+    can look up customer info, check subscription and device status, create support tickets,
+    and send password reset emails.`,
   instructions: `${COMMUNICATION_STYLE}
 
 You are a customer support agent for SPEAR, a secure remote device management platform.
@@ -41,9 +49,12 @@ Be empathetic to customer frustrations
 Provide clear step by step instructions
 If unsure, say so and offer to escalate
 Never share internal system details or admin access
+Use searchKnowledgeBase when you need exact troubleshooting steps or policy language
 
-You have access to documentation about SPEAR features, troubleshooting guides, and pricing information.`,
+  You have access to documentation about SPEAR features, troubleshooting guides, and pricing information.`,
   model: google("gemini-3-pro-preview"),
+  memory: sharedMemory,
+  scorers: getSupportScorers(),
   tools: {
     lookupCustomer,
     getSubscriptionStatus,
@@ -52,5 +63,6 @@ You have access to documentation about SPEAR features, troubleshooting guides, a
     checkRefundEligibility,
     createSupportTicket,
     sendPasswordReset,
+    searchKnowledgeBase,
   },
 });

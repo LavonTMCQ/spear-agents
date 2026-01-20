@@ -1,0 +1,601 @@
+# SPEAR Shared Tool Definitions
+# Common tools used across multiple Mastra agents
+
+version: "1.0"
+name: spear-shared-tools
+
+# Tool Categories
+categories:
+  - customer_lookup
+  - subscription_management
+  - device_management
+  - payment_management
+  - support_tools
+  - analytics
+
+# Common Tool Definitions
+tools:
+
+  #==========================================
+  # FOUNDER SLOTS CHECK (REQUIRED BEFORE QUOTING)
+  #==========================================
+
+  checkFounderSlots:
+    name: checkFounderSlots
+    description: Check if founder's pricing slots are available. MUST call before quoting $100/month pricing.
+    category: pricing
+    permissions:
+      - customer-support: read
+      - internal-ops: read
+      - sales: read
+    parameters: {}
+    returns:
+      available: boolean
+      remaining: number
+      total: number
+    api:
+      method: GET
+      endpoint: /api/founder-slots
+    notes: |
+      CRITICAL: Always check this before mentioning founder's pricing.
+      - If available=true: Can quote $100/month founder's pricing
+      - If available=false: Quote standard pricing ($299 or $199 with SPEARMINT)
+
+  #==========================================
+  # CUSTOMER LOOKUP TOOLS
+  #==========================================
+
+  lookupCustomerByEmail:
+    name: lookupCustomerByEmail
+    description: Find a customer by their email address
+    category: customer_lookup
+    permissions:
+      - customer-support: read
+      - internal-ops: read
+      - sales: none
+    parameters:
+      email:
+        type: string
+        required: true
+        description: Customer's email address
+        validation: email
+    returns:
+      success: boolean
+      customer:
+        id: string
+        name: string
+        email: string
+        role: string
+        subscriptionStatus: string
+        createdAt: datetime
+    errors:
+      - code: CUSTOMER_NOT_FOUND
+        message: No customer found with that email
+    api:
+      method: GET
+      endpoint: /api/admin/clients
+      query_params:
+        search: "{email}"
+
+  getCustomerFullDetails:
+    name: getCustomerFullDetails
+    description: Get comprehensive customer information including subscription, orders, and devices
+    category: customer_lookup
+    permissions:
+      - customer-support: limited # No payment details
+      - internal-ops: full
+      - sales: none
+    parameters:
+      customerId:
+        type: string
+        required: true
+        description: Customer's unique ID
+    returns:
+      customer:
+        id: string
+        name: string
+        email: string
+      subscription:
+        status: string
+        planType: string
+        currentPeriodEnd: datetime
+      orders:
+        type: array
+        items:
+          orderId: string
+          amount: number
+          status: string
+      devices:
+        type: array
+        items:
+          deviceId: string
+          status: string
+    api:
+      method: GET
+      endpoint: /api/admin/clients/{customerId}
+
+  #==========================================
+  # SUBSCRIPTION TOOLS
+  #==========================================
+
+  getSubscriptionStatus:
+    name: getSubscriptionStatus
+    description: Get current subscription status for a customer
+    category: subscription_management
+    permissions:
+      - customer-support: read
+      - internal-ops: read
+      - sales: none
+    parameters:
+      customerId:
+        type: string
+        required: true
+    returns:
+      status: string
+      planType: string
+      currentPeriodStart: datetime
+      currentPeriodEnd: datetime
+      cancelAtPeriodEnd: boolean
+      paymentStatus: string
+    api:
+      method: GET
+      endpoint: /api/admin/subscriptions/{customerId}
+
+  extendSubscription:
+    name: extendSubscription
+    description: Extend a customer's subscription period
+    category: subscription_management
+    permissions:
+      - customer-support: none
+      - internal-ops: write
+      - sales: none
+    audit: true
+    confirmation_required: true
+    parameters:
+      subscriptionId:
+        type: string
+        required: true
+      days:
+        type: integer
+        required: true
+        min: 1
+        max: 365
+      reason:
+        type: string
+        required: true
+        description: Reason for extension (logged for audit)
+    returns:
+      success: boolean
+      newPeriodEnd: datetime
+    api:
+      method: POST
+      endpoint: /api/admin/subscriptions/{subscriptionId}/extend
+      body:
+        days: "{days}"
+        reason: "{reason}"
+
+  cancelSubscription:
+    name: cancelSubscription
+    description: Cancel a customer's subscription
+    category: subscription_management
+    permissions:
+      - customer-support: none
+      - internal-ops: write
+      - sales: none
+    audit: true
+    confirmation_required: true
+    destructive: true
+    parameters:
+      subscriptionId:
+        type: string
+        required: true
+      reason:
+        type: string
+        required: true
+      immediate:
+        type: boolean
+        default: false
+        description: If true, cancel immediately. If false, cancel at period end.
+    returns:
+      success: boolean
+      effectiveDate: datetime
+    api:
+      method: POST
+      endpoint: /api/admin/subscriptions/{subscriptionId}/cancel
+      body:
+        reason: "{reason}"
+        immediate: "{immediate}"
+
+  #==========================================
+  # DEVICE TOOLS
+  #==========================================
+
+  getDeviceStatus:
+    name: getDeviceStatus
+    description: Get the current status of a device
+    category: device_management
+    permissions:
+      - customer-support: read
+      - internal-ops: read
+      - sales: none
+    parameters:
+      deviceId:
+        type: string
+        required: false
+      customerId:
+        type: string
+        required: false
+        description: Get all devices for a customer
+    returns:
+      devices:
+        type: array
+        items:
+          deviceId: string
+          rustDeskId: string
+          status: string
+          lastSeen: datetime
+          isOnline: boolean
+    api:
+      method: GET
+      endpoint: /api/admin/devices
+      query_params:
+        deviceId: "{deviceId}"
+        customerId: "{customerId}"
+
+  assignDevice:
+    name: assignDevice
+    description: Assign a device to a customer
+    category: device_management
+    permissions:
+      - customer-support: none
+      - internal-ops: write
+      - sales: none
+    audit: true
+    parameters:
+      deviceId:
+        type: string
+        required: true
+      customerId:
+        type: string
+        required: true
+      orderId:
+        type: string
+        required: false
+    returns:
+      success: boolean
+    api:
+      method: POST
+      endpoint: /api/admin/devices/{deviceId}/assign
+      body:
+        customerId: "{customerId}"
+        orderId: "{orderId}"
+
+  syncRustDeskStatus:
+    name: syncRustDeskStatus
+    description: Force sync device status from RustDesk server
+    category: device_management
+    permissions:
+      - customer-support: none
+      - internal-ops: write
+      - sales: none
+    parameters:
+      deviceId:
+        type: string
+        required: false
+        description: Specific device or all if omitted
+    returns:
+      success: boolean
+      devicesUpdated: integer
+    api:
+      method: POST
+      endpoint: /api/admin/rustdesk/sync
+      body:
+        deviceId: "{deviceId}"
+
+  #==========================================
+  # PAYMENT TOOLS
+  #==========================================
+
+  getOrderDetails:
+    name: getOrderDetails
+    description: Get full details of an order
+    category: payment_management
+    permissions:
+      - customer-support: limited # No payment details
+      - internal-ops: full
+      - sales: none
+    parameters:
+      orderId:
+        type: string
+        required: true
+    returns:
+      order:
+        id: string
+        amount: number
+        status: string
+        paymentStatus: string
+        createdAt: datetime
+      customer:
+        id: string
+        email: string
+    sensitive_fields:
+      - paypalCaptureId
+      - paymentDetails
+    api:
+      method: GET
+      endpoint: /api/admin/orders/{orderId}
+
+  processRefund:
+    name: processRefund
+    description: Process a refund for an order
+    category: payment_management
+    permissions:
+      - customer-support: none
+      - internal-ops: write
+      - sales: none
+    audit: true
+    confirmation_required: true
+    destructive: true
+    parameters:
+      orderId:
+        type: string
+        required: true
+      amount:
+        type: number
+        required: false
+        description: Partial refund amount. Full refund if omitted.
+      reason:
+        type: string
+        required: true
+        enum:
+          - customer_request
+          - service_issue
+          - duplicate_charge
+          - fraud
+          - other
+    returns:
+      success: boolean
+      refundId: string
+      amount: number
+    api:
+      method: POST
+      endpoint: /api/admin/orders/{orderId}/refund
+      body:
+        amount: "{amount}"
+        reason: "{reason}"
+
+  #==========================================
+  # REFUND TOOLS
+  #==========================================
+
+  checkRefundEligibility:
+    name: checkRefundEligibility
+    description: Check if an order is eligible for auto-approved refund (within 7 days of delivery)
+    category: payment_management
+    permissions:
+      - customer-support: read
+      - internal-ops: read
+      - sales: none
+    parameters:
+      orderId:
+        type: string
+        required: true
+    returns:
+      eligible: boolean
+      reason: string
+      deliveryDate: datetime
+      daysSinceDelivery: number
+    logic: |
+      If daysSinceDelivery <= 7: Auto-approve eligible
+      If daysSinceDelivery > 7: Requires admin approval (escalate)
+    api:
+      method: GET
+      endpoint: /api/admin/orders/{orderId}
+      # Calculate eligibility from deliveryDate
+
+  processAutoRefund:
+    name: processAutoRefund
+    description: Process refund for orders within 7-day window (auto-approved)
+    category: payment_management
+    permissions:
+      - customer-support: write  # Can process within 7 days
+      - internal-ops: write
+      - sales: none
+    audit: true
+    parameters:
+      orderId:
+        type: string
+        required: true
+      reason:
+        type: string
+        default: "customer_request_7day"
+    preconditions:
+      - Order must be within 7 days of delivery
+      - Order must not already be refunded
+    returns:
+      success: boolean
+      refundId: string
+      amount: number
+    api:
+      method: POST
+      endpoint: /api/admin/orders/{orderId}/refund
+      body:
+        reason: "{reason}"
+
+  #==========================================
+  # SUPPORT TOOLS
+  #==========================================
+
+  createSupportTicket:
+    name: createSupportTicket
+    description: Create a support ticket
+    category: support_tools
+    permissions:
+      - customer-support: write
+      - internal-ops: write
+      - sales: none
+    parameters:
+      customerId:
+        type: string
+        required: true
+      subject:
+        type: string
+        required: true
+        maxLength: 200
+      description:
+        type: string
+        required: true
+        maxLength: 5000
+      priority:
+        type: string
+        required: false
+        enum: [low, medium, high, urgent]
+        default: medium
+      category:
+        type: string
+        required: false
+        enum: [billing, technical, account, other]
+    returns:
+      success: boolean
+      ticketId: string
+      status: string
+    api:
+      method: POST
+      endpoint: /api/support-tickets
+      body:
+        customerId: "{customerId}"
+        subject: "{subject}"
+        description: "{description}"
+        priority: "{priority}"
+        category: "{category}"
+
+  getTicketStatus:
+    name: getTicketStatus
+    description: Get the status of a support ticket
+    category: support_tools
+    permissions:
+      - customer-support: read
+      - internal-ops: read
+      - sales: none
+    parameters:
+      ticketId:
+        type: string
+        required: true
+    returns:
+      ticket:
+        id: string
+        subject: string
+        status: string
+        priority: string
+        createdAt: datetime
+        updatedAt: datetime
+      comments:
+        type: array
+    api:
+      method: GET
+      endpoint: /api/support-tickets/{ticketId}
+
+  sendPasswordReset:
+    name: sendPasswordReset
+    description: Send a password reset email to a customer
+    category: support_tools
+    permissions:
+      - customer-support: write
+      - internal-ops: write
+      - sales: none
+    rate_limit: 3/hour/email
+    parameters:
+      email:
+        type: string
+        required: true
+        validation: email
+    returns:
+      success: boolean
+      message: string
+    api:
+      method: POST
+      endpoint: /api/auth/forgot-password
+      body:
+        email: "{email}"
+
+  #==========================================
+  # ANALYTICS TOOLS
+  #==========================================
+
+  getRevenueMetrics:
+    name: getRevenueMetrics
+    description: Get revenue and business metrics
+    category: analytics
+    permissions:
+      - customer-support: none
+      - internal-ops: read
+      - sales: limited
+    parameters:
+      period:
+        type: string
+        enum: [day, week, month, quarter, year]
+        default: month
+    returns:
+      mrr: number
+      arr: number
+      newSubscriptions: integer
+      churnedSubscriptions: integer
+      churnRate: number
+      totalCustomers: integer
+      activeSubscriptions: integer
+    api:
+      method: GET
+      endpoint: /api/admin/revenue
+      query_params:
+        period: "{period}"
+
+# Error Handling
+error_responses:
+  standard:
+    - code: UNAUTHORIZED
+      status: 401
+      message: Authentication required
+      action: request_auth
+
+    - code: FORBIDDEN
+      status: 403
+      message: Insufficient permissions
+      action: escalate
+
+    - code: NOT_FOUND
+      status: 404
+      message: Resource not found
+      action: inform_user
+
+    - code: VALIDATION_ERROR
+      status: 400
+      message: Invalid input
+      action: request_correction
+
+    - code: RATE_LIMITED
+      status: 429
+      message: Too many requests
+      action: wait_and_retry
+
+    - code: SERVER_ERROR
+      status: 500
+      message: Internal server error
+      action: escalate
+
+# Rate Limiting
+rate_limits:
+  default: 60/minute
+  per_tool:
+    processRefund: 10/hour
+    sendPasswordReset: 3/hour/email
+    cancelSubscription: 10/hour
+
+# Audit Configuration
+audit:
+  log_all_tool_calls: true
+  sensitive_actions:
+    - processRefund
+    - cancelSubscription
+    - extendSubscription
+    - assignDevice
+  retention_days: 365

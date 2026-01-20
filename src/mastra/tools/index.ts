@@ -7,6 +7,7 @@ export {
   checkRefundEligibility,
   createSupportTicket,
   sendPasswordReset,
+  searchKnowledgeBase,
 } from "./customer-tools";
 
 // Admin tools (for internal ops agent only)

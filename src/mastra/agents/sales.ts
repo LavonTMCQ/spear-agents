@@ -1,11 +1,17 @@
 import { Agent } from "@mastra/core/agent";
 import { google } from "@ai-sdk/google";
-import { checkFounderSlots } from "../tools";
+import { checkFounderSlots, searchKnowledgeBase } from "../tools";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES, SPEAR_PRICING } from "../shared/constants";
+import { sharedMemory } from "../shared/memory";
 
 export const salesAgent = new Agent({
   id: "sales",
   name: "SPEAR Sales",
+  description: `Handles pre-sales questions and new customer onboarding for SPEAR. Use this agent
+    when users ask about pricing, plans, features, what SPEAR does, how to sign up, or are
+    considering purchasing. This agent explains the value proposition for home care workers
+    and caregivers, checks founder's pricing availability, and guides potential customers
+    through the signup process. NOT for existing customer support issues.`,
   instructions: `${COMMUNICATION_STYLE}
 
 You are a sales and onboarding specialist for SPEAR, a secure remote device management platform.
@@ -45,10 +51,13 @@ Don't over promise or make guarantees
 Focus on value, not just price
 If someone isn't a good fit, be honest
 Guide to signup but don't be pushy
+Use searchKnowledgeBase for product details or FAQs you want to quote precisely
 
-You have access to feature documentation, pricing information, and FAQs.`,
+  You have access to feature documentation, pricing information, and FAQs.`,
   model: google("gemini-3-pro-preview"),
+  memory: sharedMemory,
   tools: {
     checkFounderSlots,
+    searchKnowledgeBase,
   },
 });

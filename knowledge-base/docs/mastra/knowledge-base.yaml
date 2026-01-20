@@ -1,0 +1,251 @@
+# SPEAR Knowledge Base Configuration
+# Defines how documentation is loaded and indexed for Mastra agents
+
+version: "1.0"
+name: spear-knowledge-base
+
+# Source Configuration
+source:
+  type: filesystem
+  root: /docs
+  file_types:
+    - .md
+    - .yaml
+  ignore:
+    - mastra/ # Don't load agent configs as knowledge
+    - images/
+    - "*.draft.md"
+
+# Document Processing
+processing:
+  # Parse YAML frontmatter
+  parse_frontmatter: true
+
+  # Extract sections
+  section_extraction:
+    enabled: true
+    headers:
+      - "## Summary"
+      - "## Quick Reference"
+      - "## Actions"
+      - "## Causes & Solutions"
+      - "## For AI Agents"
+
+  # Chunk configuration
+  chunking:
+    strategy: semantic # section | fixed | semantic
+    max_chunk_size: 2000
+    overlap: 200
+    preserve_headers: true
+
+  # Embedding configuration
+  embedding:
+    model: text-embedding-ada-002 # or local model
+    dimensions: 1536
+
+# Index Configuration
+indexing:
+  # Primary index for all docs
+  primary:
+    name: spear-docs
+    refresh: on_change
+
+  # Agent-specific indexes (filtered views)
+  views:
+    - name: customer-support
+      filters:
+        audience: [customer-support, ai-agent]
+        type: [feature, troubleshooting, reference]
+
+    - name: internal-ops
+      filters:
+        audience: [internal-ops, admin, ai-agent]
+        type: all
+
+    - name: sales
+      filters:
+        audience: [sales, ai-agent]
+        type: [feature, reference]
+
+# Retrieval Configuration
+retrieval:
+  # Default retrieval settings
+  default:
+    top_k: 5
+    min_similarity: 0.7
+    rerank: true
+
+  # Agent-specific overrides
+  agents:
+    customer-support:
+      top_k: 3
+      boost_categories: [troubleshooting]
+
+    internal-ops:
+      top_k: 7
+      include_api_docs: true
+
+    sales:
+      top_k: 3
+      boost_categories: [reference]
+
+# Metadata Schema
+metadata_schema:
+  required:
+    - id
+    - title
+    - type
+    - category
+    - audience
+    - last_updated
+  optional:
+    - related
+    - tags
+    - api_endpoints
+    - ui_paths
+    - version
+
+# Document Categories
+categories:
+  - id: auth
+    label: Authentication & Access
+    description: Login, passwords, 2FA, permissions
+
+  - id: payment
+    label: Payment & Billing
+    description: Checkout, refunds, disputes, invoices
+
+  - id: device
+    label: Device Management
+    description: RustDesk, connections, device lifecycle
+
+  - id: subscription
+    label: Subscriptions
+    description: Plans, billing cycles, cancellation
+
+  - id: admin
+    label: Administration
+    description: Admin dashboard, management tools
+
+  - id: client
+    label: Client Features
+    description: Client dashboard, self-service
+
+  - id: support
+    label: Customer Support
+    description: Tickets, help center, FAQs
+
+  - id: system
+    label: System & Infrastructure
+    description: Settings, integrations, health
+
+# Document Types
+document_types:
+  - id: feature
+    label: Feature Documentation
+    schema:
+      required_sections:
+        - Summary
+        - Quick Reference
+        - Overview
+        - Actions
+
+  - id: api
+    label: API Documentation
+    schema:
+      required_sections:
+        - Summary
+        - Quick Reference
+        - Endpoint Details
+        - Request
+        - Response
+
+  - id: process
+    label: Business Process
+    schema:
+      required_sections:
+        - Summary
+        - Quick Reference
+        - Process Flow
+        - Decision Points
+
+  - id: guide
+    label: How-To Guide
+    schema:
+      required_sections:
+        - Summary
+        - Prerequisites
+        - Steps
+
+  - id: troubleshooting
+    label: Troubleshooting
+    schema:
+      required_sections:
+        - Symptoms
+        - Quick Diagnosis
+        - Causes & Solutions
+        - Escalation
+
+  - id: reference
+    label: Reference
+    schema:
+      required_sections:
+        - Summary
+        - Quick Reference
+
+# Glossary Integration
+glossary:
+  source: /docs/GLOSSARY.md
+  auto_link: true
+  expand_on_first_use: true
+
+# Priority Documents
+# These are always loaded first and given higher weight
+priority_documents:
+  all_agents:
+    - /docs/GLOSSARY.md
+    - /docs/reference/pricing.md
+
+  customer-support:
+    - /docs/troubleshooting/payment/failed-payment.md
+    - /docs/troubleshooting/device/connection-failed.md
+    - /docs/troubleshooting/access/login-issues.md
+    - /docs/features/client/dashboard.md
+
+  internal-ops:
+    - /docs/processes/payment-flow.md
+    - /docs/processes/subscription-lifecycle.md
+    - /docs/guides/admin/dashboard.md
+    - /docs/api/admin/refund.md
+
+  sales:
+    - /docs/reference/pricing.md
+    - /docs/features/subscription/plans.md
+    - /docs/features/device/rustdesk.md
+
+# Cache Configuration
+cache:
+  enabled: true
+  ttl: 3600 # seconds
+  invalidate_on:
+    - file_change
+    - manual_refresh
+
+# Health Checks
+health:
+  check_interval: 300 # 5 minutes
+  alerts:
+    - missing_required_docs
+    - stale_documents # > 30 days
+    - broken_links
+    - invalid_frontmatter
+
+# API for External Access
+api:
+  enabled: true
+  endpoints:
+    search: /api/knowledge/search
+    document: /api/knowledge/doc/{id}
+    index_status: /api/knowledge/status
+  authentication: bearer_token
+  rate_limit: 100/minute

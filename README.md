@@ -1,6 +1,11 @@
 # SPEAR Agents
 
-AI agents for SPEAR platform powered by Mastra and Google Gemini 2.5 Pro.
+AI agents for SPEAR platform powered by Mastra and Google Gemini 3 Pro Preview.
+
+Features:
+- Human-like communication style (active voice, direct, no AI filler phrases)
+- Context caching for 90% cost savings on repeated tokens
+- Human-in-the-loop (HITL) approval for destructive operations
 
 ## Agents
 
