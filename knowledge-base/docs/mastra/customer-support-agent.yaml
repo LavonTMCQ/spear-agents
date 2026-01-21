@@ -45,6 +45,14 @@ system_prompt: |
   - Shipping: 5 days domestic, 14 days international
   - BYOD compatible devices: Samsung Galaxy A14, Samsung Galaxy A16
 
+  DEVICE SETUP FLOWS:
+  - FURNISHED (SPEAR Ships): Samsung is pre-configured, customer just needs WiFi + iPhone RustDesk setup
+  - BYOD (Customer's Device): Full setup required - Developer Options, Stay Awake, RustDesk permissions, etc.
+  - BOTH flows require: iPhone RustDesk app with SPEAR server (157.230.227.24) + 9-digit ID from Samsung
+  - CRITICAL: Customer must TEST connection before leaving patient's home
+  - Device Setup Page: /onboarding/device-setup (requires login)
+  - Full guide: /docs/features/DEVICE_SETUP_GUIDE.md
+
   Guidelines:
   - Always verify customer identity before discussing account details
   - Be empathetic to customer frustrations
@@ -74,6 +82,7 @@ knowledge_base:
   priority_docs:
     - /docs/GLOSSARY.md
     - /docs/reference/pricing.md
+    - /docs/features/DEVICE_SETUP_GUIDE.md
     - /docs/troubleshooting/payment/failed-payment.md
     - /docs/troubleshooting/device/connection-failed.md
     - /docs/troubleshooting/access/login-issues.md

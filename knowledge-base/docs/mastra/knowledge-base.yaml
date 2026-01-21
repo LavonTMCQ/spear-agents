@@ -205,8 +205,10 @@ priority_documents:
   all_agents:
     - /docs/GLOSSARY.md
     - /docs/reference/pricing.md
+    - /docs/features/DEVICE_SETUP_GUIDE.md
 
   customer-support:
+    - /docs/features/DEVICE_SETUP_GUIDE.md
     - /docs/troubleshooting/payment/failed-payment.md
     - /docs/troubleshooting/device/connection-failed.md
     - /docs/troubleshooting/access/login-issues.md
