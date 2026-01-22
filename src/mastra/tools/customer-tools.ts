@@ -64,39 +64,71 @@ export const lookupCustomer = createTool({
 
 export const getSubscriptionStatus = createTool({
   id: "getSubscriptionStatus",
-  description: "Get detailed subscription information for a customer",
+  description:
+    "Get detailed subscription information for a customer by their email address. Returns subscription status, plan type, billing period, and cancellation status.",
   inputSchema: z.object({
-    customerId: z.string().describe("Customer's unique ID"),
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address to look up their subscription"),
   }),
   outputSchema: z.object({
     success: z.boolean(),
+    user: z
+      .object({
+        id: z.string(),
+        name: z.string().nullable(),
+        email: z.string(),
+      })
+      .nullable(),
     subscription: z
       .object({
+        id: z.string(),
         status: z.string(),
         planType: z.string().nullable(),
+        currentPeriodStart: z.string().nullable(),
         currentPeriodEnd: z.string().nullable(),
         cancelAtPeriodEnd: z.boolean(),
+        createdAt: z.string().nullable(),
       })
       .nullable(),
     error: z.string().optional(),
   }),
-  execute: async ({ customerId }) => {
+  execute: async ({ email }) => {
     try {
-      const data = await spearApi(`/admin/subscriptions/${customerId}`);
-      if (data.subscription) {
+      const data = await spearApi(`/agent/subscription?email=${encodeURIComponent(email)}`);
+
+      if (data.success) {
         return {
           success: true,
-          subscription: {
-            status: data.subscription.status,
-            planType: data.subscription.planType,
-            currentPeriodEnd: data.subscription.currentPeriodEnd,
-            cancelAtPeriodEnd: data.subscription.cancelAtPeriodEnd || false,
-          },
+          user: data.user,
+          subscription: data.subscription
+            ? {
+                id: data.subscription.id,
+                status: data.subscription.status,
+                planType: data.subscription.planType,
+                currentPeriodStart: data.subscription.currentPeriodStart,
+                currentPeriodEnd: data.subscription.currentPeriodEnd,
+                cancelAtPeriodEnd: data.subscription.cancelAtPeriodEnd || false,
+                createdAt: data.subscription.createdAt,
+              }
+            : null,
         };
       }
-      return { success: false, subscription: null, error: "No subscription found" };
+
+      return {
+        success: false,
+        user: null,
+        subscription: null,
+        error: data.error || "Failed to fetch subscription",
+      };
     } catch (error) {
-      return { success: false, subscription: null, error: String(error) };
+      return {
+        success: false,
+        user: null,
+        subscription: null,
+        error: String(error),
+      };
     }
   },
 });
