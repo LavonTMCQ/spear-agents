@@ -7,6 +7,7 @@ import {
   checkFounderSlots,
   checkRefundEligibility,
   createSupportTicket,
+  getSupportTickets,
   sendPasswordReset,
   searchKnowledgeBase,
 } from "../tools";
@@ -62,6 +63,7 @@ Use searchKnowledgeBase when you need exact troubleshooting steps or policy lang
     checkFounderSlots,
     checkRefundEligibility,
     createSupportTicket,
+    getSupportTickets,
     sendPasswordReset,
     searchKnowledgeBase,
   },

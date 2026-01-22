@@ -29,6 +29,7 @@ SPEAR Agents is the AI assistant system for the SPEAR remote device management p
    - Contains API endpoints the agents call
    - `/api/agent/devices` - Device lookup for agents
    - `/api/agent/subscription` - Subscription status lookup for agents
+   - `/api/agent/tickets` - Support ticket creation and viewing for agents
 
 2. **SPEAR Agents** (`spear-agents/`) - Deployed on Railway
    - Contains the Mastra agents and tools
@@ -242,7 +243,8 @@ The agents use pgvector for:
 - `getDeviceStatus` - Get device info by customer email
 - `checkFounderSlots` - Check founder pricing availability
 - `checkRefundEligibility` - Check if order qualifies for refund
-- `createSupportTicket` - Create support ticket
+- `createSupportTicket` - Create support ticket by customer email (appears in admin dashboard)
+- `getSupportTickets` - View customer's support tickets by email
 - `sendPasswordReset` - Trigger password reset email
 - `searchKnowledgeBase` - RAG search for policies/docs
 

@@ -6,6 +6,7 @@ export {
   checkFounderSlots,
   checkRefundEligibility,
   createSupportTicket,
+  getSupportTickets,
   sendPasswordReset,
   searchKnowledgeBase,
 } from "./customer-tools";

@@ -306,39 +306,152 @@ export const checkRefundEligibility = createTool({
 
 export const createSupportTicket = createTool({
   id: "createSupportTicket",
-  description: "Create a support ticket for issues that need human escalation",
+  description:
+    "Create a support ticket for issues that need human escalation. Use this when you cannot resolve the customer's issue and need to involve a human support agent.",
   inputSchema: z.object({
-    customerId: z.string().describe("Customer's unique ID"),
-    subject: z.string().max(200).describe("Ticket subject"),
-    description: z.string().max(5000).describe("Detailed description"),
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address"),
+    subject: z.string().max(200).describe("Brief summary of the issue"),
+    description: z
+      .string()
+      .max(5000)
+      .describe("Detailed description of the issue and what has been tried"),
+    category: z
+      .enum(["technical", "billing", "account", "feature", "other"])
+      .default("technical")
+      .describe("Category of the support issue"),
     priority: z
       .enum(["low", "medium", "high", "urgent"])
       .default("medium")
-      .describe("Ticket priority"),
+      .describe("Ticket priority - use urgent only for critical issues"),
   }),
   outputSchema: z.object({
     success: z.boolean(),
-    ticketId: z.string().nullable(),
+    ticket: z
+      .object({
+        id: z.string(),
+        subject: z.string(),
+        category: z.string(),
+        priority: z.string(),
+        status: z.string(),
+        createdAt: z.string().nullable(),
+      })
+      .nullable(),
+    message: z.string().optional(),
     error: z.string().optional(),
   }),
-  execute: async ({ customerId, subject, description, priority }) => {
+  execute: async ({ email, subject, description, category, priority }) => {
     try {
-      const data = await spearApi("/support-tickets", {
+      const data = await spearApi("/agent/tickets", {
         method: "POST",
         body: JSON.stringify({
-          customerId,
+          email,
           subject,
           description,
+          category,
           priority,
         }),
       });
 
-      if (data.ticket) {
-        return { success: true, ticketId: data.ticket.id };
+      if (data.success && data.ticket) {
+        return {
+          success: true,
+          ticket: data.ticket,
+          message: data.message || `Ticket created with ID: ${data.ticket.id}`,
+        };
       }
-      return { success: false, ticketId: null, error: "Failed to create ticket" };
+      return {
+        success: false,
+        ticket: null,
+        error: data.error || "Failed to create ticket",
+      };
     } catch (error) {
-      return { success: false, ticketId: null, error: String(error) };
+      return { success: false, ticket: null, error: String(error) };
+    }
+  },
+});
+
+export const getSupportTickets = createTool({
+  id: "getSupportTickets",
+  description:
+    "View existing support tickets for a customer by their email address. Use this to check on ticket status or see ticket history.",
+  inputSchema: z.object({
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address to look up their tickets"),
+    status: z
+      .enum(["all", "open", "in_progress", "closed"])
+      .default("all")
+      .describe("Filter tickets by status"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    user: z
+      .object({
+        id: z.string(),
+        name: z.string().nullable(),
+        email: z.string(),
+      })
+      .nullable(),
+    tickets: z.array(
+      z.object({
+        id: z.string(),
+        subject: z.string(),
+        description: z.string(),
+        category: z.string(),
+        status: z.string(),
+        priority: z.string(),
+        adminNotes: z.string().nullable(),
+        createdAt: z.string().nullable(),
+        updatedAt: z.string().nullable(),
+        closedAt: z.string().nullable(),
+      })
+    ),
+    ticketCount: z.number(),
+    openCount: z.number(),
+    inProgressCount: z.number(),
+    error: z.string().optional(),
+  }),
+  execute: async ({ email, status }) => {
+    try {
+      const statusParam = status !== "all" ? `&status=${status}` : "";
+      const data = await spearApi(
+        `/agent/tickets?email=${encodeURIComponent(email)}${statusParam}`
+      );
+
+      if (data.success) {
+        return {
+          success: true,
+          user: data.user,
+          tickets: data.tickets || [],
+          ticketCount: data.ticketCount || 0,
+          openCount: data.openCount || 0,
+          inProgressCount: data.inProgressCount || 0,
+        };
+      }
+
+      return {
+        success: false,
+        user: null,
+        tickets: [],
+        ticketCount: 0,
+        openCount: 0,
+        inProgressCount: 0,
+        error: data.error || "Failed to fetch tickets",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        user: null,
+        tickets: [],
+        ticketCount: 0,
+        openCount: 0,
+        inProgressCount: 0,
+        error: String(error),
+      };
     }
   },
 });
