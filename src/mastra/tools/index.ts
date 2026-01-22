@@ -31,4 +31,12 @@ export {
   assignDevice,
   getRevenueMetrics,
   listDisputes,
+  // Device inventory management
+  getDeviceInventory,
+  addDeviceToInventory,
+  updateDeviceStatus,
+  // Dispute management
+  getDisputeDetails,
+  flagDispute,
+  resolveDispute,
 } from "./admin-tools";

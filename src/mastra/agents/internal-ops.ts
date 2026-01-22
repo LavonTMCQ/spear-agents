@@ -25,6 +25,14 @@ import {
   getQuickDeviceInfo,
   getOnboardingProgress,
   troubleshootConnection,
+  // Device inventory management
+  getDeviceInventory,
+  addDeviceToInventory,
+  updateDeviceStatus,
+  // Dispute management
+  getDisputeDetails,
+  flagDispute,
+  resolveDispute,
 } from "../tools";
 import { sharedMemory } from "../shared/memory";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
@@ -85,5 +93,13 @@ ${SPEAR_BUSINESS_RULES}
     getQuickDeviceInfo,
     getOnboardingProgress,
     troubleshootConnection,
+    // Device inventory management
+    getDeviceInventory,
+    addDeviceToInventory,
+    updateDeviceStatus,
+    // Dispute management
+    getDisputeDetails,
+    flagDispute,
+    resolveDispute,
   },
 });

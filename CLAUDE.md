@@ -37,6 +37,8 @@ SPEAR Agents is the AI assistant system for the SPEAR remote device management p
    - `/api/agent/cancel-request` - Submit cancellation request (creates ticket)
    - `/api/agent/health-check` - Comprehensive account health check
    - `/api/agent/onboarding` - Onboarding progress tracking (BYOD/Furnished)
+   - `/api/agent/inventory` - Device inventory management (GET/POST/PATCH)
+   - `/api/agent/disputes` - Dispute management (GET/POST/PATCH)
 
 2. **SPEAR Agents** (`spear-agents/`) - Deployed on Railway
    - Contains the Mastra agents and tools
@@ -268,12 +270,18 @@ The agents use pgvector for:
 
 ### Admin Tools (admin-tools.ts)
 - `getOrderDetails` - Get order information
-- `processRefund` - Process a refund
-- `extendSubscription` - Extend subscription period
-- `cancelSubscription` - Cancel subscription
-- `assignDevice` - Assign device to customer
+- `processRefund` - Process a refund (requires approval)
+- `extendSubscription` - Extend subscription period (requires approval)
+- `cancelSubscription` - Cancel subscription (requires approval)
+- `assignDevice` - Assign device to customer (requires approval)
 - `getRevenueMetrics` - Get revenue data
 - `listDisputes` - List payment disputes
+- `getDeviceInventory` - View device inventory with filtering (available, assigned, shipped, etc.)
+- `addDeviceToInventory` - Add new device to inventory (requires approval)
+- `updateDeviceStatus` - Update device status or unassign (requires approval)
+- `getDisputeDetails` - Get details of a specific dispute or list all
+- `flagDispute` - Flag new dispute for admin review
+- `resolveDispute` - Resolve or update dispute status (requires approval)
 
 ## Future Development
 
