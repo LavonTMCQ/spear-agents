@@ -28,6 +28,7 @@ SPEAR Agents is the AI assistant system for the SPEAR remote device management p
 1. **SPEAR Main App** (`spear/`) - Deployed on Vercel at `spear-global.com`
    - Contains API endpoints the agents call
    - `/api/agent/devices` - Device lookup for agents
+   - `/api/agent/subscription` - Subscription status lookup for agents
 
 2. **SPEAR Agents** (`spear-agents/`) - Deployed on Railway
    - Contains the Mastra agents and tools
@@ -237,7 +238,7 @@ The agents use pgvector for:
 
 ### Customer Tools (customer-tools.ts)
 - `lookupCustomer` - Look up customer by email
-- `getSubscriptionStatus` - Get subscription details
+- `getSubscriptionStatus` - Get subscription details by customer email
 - `getDeviceStatus` - Get device info by customer email
 - `checkFounderSlots` - Check founder pricing availability
 - `checkRefundEligibility` - Check if order qualifies for refund
