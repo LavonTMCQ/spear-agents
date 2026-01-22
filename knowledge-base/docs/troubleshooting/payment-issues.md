@@ -11,7 +11,7 @@ This guide covers common payment-related issues in SPEAR and their solutions. Al
 ```bash
 # PayPal Production Credentials (DO NOT CHANGE)
 PAYPAL_CLIENT_ID=AXclM4bywjg_OwYBbpzek6HcjEo53xu9g7XmDSCDJ9ACnytqsPjAhAOgQmRz-DG7rj1M1cZjzibzlcqC
-PAYPAL_CLIENT_SECRET=EIPpyba0p0N6aGPGWydTuQYPKZH8n7RhYA3-rQtRokeaUMrBO3cAlyh0DB38xF1Bl0jiaK9z3dneW0Wk
+PAYPAL_CLIENT_SECRET=REPLACE_WITH_PAYPAL_CLIENT_SECRET
 PAYPAL_ENVIRONMENT=production
 ```
 

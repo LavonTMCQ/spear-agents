@@ -416,7 +416,7 @@ Admin-only test payment endpoint for safe testing.
 ### PayPal Configuration
 ```env
 PAYPAL_CLIENT_ID=xxx
-PAYPAL_CLIENT_SECRET=xxx
+PAYPAL_CLIENT_SECRET=REPLACE_WITH_PAYPAL_CLIENT_SECRET
 PAYPAL_WEBHOOK_ID=xxx
 PAYPAL_ENVIRONMENT=production
 ```

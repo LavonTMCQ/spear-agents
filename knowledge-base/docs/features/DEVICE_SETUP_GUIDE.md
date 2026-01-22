@@ -19,31 +19,176 @@ Both devices need RustDesk installed and configured with SPEAR server settings.
 
 ## Setup Flows
 
-SPEAR has two setup flows based on order type:
+SPEAR has two setup flows based on order type, accessible from the **Unified Device Setup Page**:
 
-### Furnished Device (SPEAR Ships Samsung)
-If SPEAR shipped you a Samsung device, most configuration is already done:
-- RustDesk is pre-installed and configured
-- Developer Options are enabled
+- **URL**: `/onboarding/device-setup`
+- **Furnished Flow**: `/onboarding/device-setup?type=furnished` (4 steps)
+- **BYOD Flow**: `/onboarding/device-setup?type=byod` (7 steps)
+
+### Flow Comparison
+
+| Aspect | Furnished | BYOD |
+|--------|-----------|------|
+| **Steps** | 4 | 7 |
+| **Pre-configuration** | RustDesk pre-installed | User installs everything |
+| **Developer Options** | Already enabled | Required (tap Build Number 7x) |
+| **Device Source** | SPEAR ships device | User provides device |
+| **Complexity** | Low | High |
+| **Target** | Home Care agencies | Tech-savvy users/DevOps |
+| **Cost** | Device + Service | Service only |
+
+---
+
+## Furnished Device Flow (4 Steps)
+
+If SPEAR shipped you a Samsung device, most configuration is already done.
+
+### Step 1: Your Device Arrived
+- Samsung Galaxy A14 pre-configured
+- RustDesk pre-installed
+- Developer Options enabled
 - "Stay awake" is already on
 - Accessibility permissions granted
-- App is pinned
+- **"Most setup already done for you!"**
 
-**You just need to:**
-1. Place device at patient's home
-2. Connect to patient's WiFi
-3. Set up RustDesk on your iPhone
-4. Test the connection
+### Step 2: Place & Connect WiFi
+1. Transport to patient's home
+2. Go to **Settings > WiFi**
+3. Connect to patient's WiFi network
+4. Prefer **2.4GHz networks** (better range through walls)
+5. Verify internet is working (open Chrome, load a page)
 
-### BYOD (Bring Your Own Device)
-If you're using your own Samsung device, you need the full setup:
-1. Enable Developer Options (tap Build Number 7 times)
-2. Enable "Stay awake while charging"
-3. Install and configure RustDesk
-4. Grant all permissions
-5. Configure device settings (sounds off, location on, etc.)
-6. Set up RustDesk on your iPhone
-7. Test the connection
+### Step 3: Set Up Your iPhone
+1. Install RustDesk on iPhone from App Store
+2. Open RustDesk > Settings > Scan QR Code
+3. Scan the QR code from the setup page to auto-configure SPEAR server
+4. Note the 9-digit Device ID from the Samsung
+5. Set permanent password on Samsung: RustDesk > Settings > Security > Permanent Password
+6. Enable "Remember Me" on iPhone for quick reconnection
+
+### Step 4: Test & Verify
+1. From your iPhone, enter the Samsung's 9-digit ID
+2. Tap Connect and enter the password
+3. Confirm you can see and control the Samsung screen
+4. Test audio/notifications work correctly
+5. **CRITICAL: Test while still at patient's home!**
+
+---
+
+## BYOD Flow (7 Steps)
+
+If you're using your own Samsung device, you need the full setup.
+
+### Step 1: Prepare Device
+1. Power on Samsung phone
+2. Ensure good WiFi signal
+3. Note: You'll need the 9-digit Device ID from RustDesk app later
+
+### Step 2: Enable Developer Options
+1. Go to **Settings > About phone > Software information**
+2. Tap **Build number** exactly **7 times**
+3. You'll see "Developer mode has been enabled"
+4. Go back to **Settings > Developer options**
+5. Enable **"Stay awake"** (Keep screen on while charging)
+6. Set **"Stay on locked screen"** timeout to maximum
+
+**Why this matters:** Without this setting, the screen turns off after a few minutes and RustDesk may not work properly.
+
+### Step 3: RustDesk Setup
+1. Download RustDesk APK from official RustDesk website or Play Store
+2. Install the application
+3. Grant all requested permissions:
+   - **Accessibility permission** (CRITICAL for input control)
+   - **Screen recording** permission
+   - **Run in background** permission
+4. Run through initial setup
+
+### Step 4: Device Settings
+1. **Disable auto-update**:
+   - Open Google Play Store
+   - Tap profile icon > Settings
+   - Tap **Network preferences > Auto-update apps**
+   - Select **"Don't auto-update apps"**
+2. **Allow notifications**: Ensure RustDesk can show notifications
+3. **Enable "Start on Boot"**: RustDesk > Settings > Enable "Start on boot"
+4. **Disable battery optimization**: Settings > Apps > RustDesk > Battery > Unrestricted
+
+### Step 5: Place & Connect WiFi
+1. Transport to patient's home
+2. Connect to home WiFi (prefer 2.4GHz)
+3. Verify stable connection
+4. **Good locations:**
+   - Near the WiFi router (better signal)
+   - On a shelf or table (stable surface)
+   - Near a power outlet
+   - Somewhere discreet the patient won't move
+5. **Avoid:**
+   - Basements or rooms far from router
+   - Near microwaves (interference)
+   - Direct sunlight (overheating)
+
+### Step 6: Set Up iPhone
+1. Install RustDesk on iPhone from App Store
+2. Open RustDesk > Settings > Scan QR Code
+3. Scan the QR code to add SPEAR server configuration
+4. On Samsung: RustDesk > Settings > Security > Set **Permanent Password**
+5. On iPhone: Enter Samsung's 9-digit ID
+6. Connect and enable **"Remember Me"** for quick access
+
+### Step 7: Test & Verify
+1. Confirm remote access works from iPhone
+2. Test screen control (taps, swipes)
+3. Verify audio/notifications
+4. Test opening apps on the Samsung
+5. **CRITICAL: Always test before leaving patient's home!**
+
+---
+
+## Device Pairing System (NEW)
+
+SPEAR now includes an automatic device pairing system to simplify device registration.
+
+### What is Device Pairing?
+
+- Each user receives a unique **Pairing Code** (format: `SP429-A7X9`)
+- Users link their device by entering their **9-digit RustDesk ID**
+- **One device per user** - users can update their paired device anytime
+- Admin dashboard shows unpaired devices report
+
+### How to Pair Your Device
+
+1. **Get Your Pairing Code**:
+   - Log in to SPEAR dashboard
+   - Go to **Devices** section
+   - Your unique pairing code is displayed (e.g., `SP429-A7X9`)
+
+2. **Link Your Device**:
+   - Note your Samsung's 9-digit RustDesk ID (e.g., `123 456 789`)
+   - Enter the ID in the pairing form
+   - Click "Link Device"
+   - Device is now paired to your account
+
+3. **Update Device** (if needed):
+   - If you need to change to a different device
+   - Go to device settings
+   - Click "Change Device"
+   - Enter new 9-digit RustDesk ID
+   - Old device is automatically unassigned
+
+### Device Pairing Rules
+
+- **One device per user**: Only one device can be paired at a time
+- **9-digit ID required**: Must be exactly 9 digits
+- **Unique devices**: Same device can't be paired to multiple users
+- **Grandfathered devices**: Legacy devices are excluded from pairing requirements
+
+### For Admins: Unpaired Devices Report
+
+Access the unpaired devices report at `/admin/devices`:
+- Shows total devices, paired count, unpaired count
+- Lists devices needing attention
+- Shows days since device was created
+- Excludes grandfathered devices
 
 ---
 
@@ -57,153 +202,68 @@ All devices must be configured with these server settings:
 | **Relay Server** | `157.230.227.24` |
 | **Key** | `RweaRIQPdyQZxwRiCJ6BgZoNnFXPd5VfSvakliQ3heQ=` |
 
-### QR Code Configuration
+### QR Code Configuration (Recommended)
 RustDesk can scan a QR code to auto-configure these settings:
-- Open RustDesk → Settings → Scan QR Code
+- Open RustDesk > Settings > Scan QR Code
 - Point camera at the QR code shown on the setup page
+- Server settings are applied automatically
+
+### Manual Configuration (Fallback)
+If QR code doesn't work:
+1. Open RustDesk > Settings (gear icon)
+2. Tap **ID/Relay Server**
+3. Enter: `157.230.227.24` as the ID Server
+4. Paste the Key: `RweaRIQPdyQZxwRiCJ6BgZoNnFXPd5VfSvakliQ3heQ=`
+5. Tap **Apply**
 
 ---
 
-## Samsung Device Setup (At Patient's Home)
+## Samsung Device Setup Checklist
 
-### Step 1: Enable Developer Options (CRITICAL)
+### For BYOD Users
 
-Developer Options must be enabled to keep the screen on while charging.
-
-1. Go to **Settings → About phone → Software information**
-2. Tap **Build number** exactly **7 times**
-3. You'll see "Developer mode has been enabled"
-4. Go back to **Settings → Developer options**
-5. Enable **"Stay awake"** (or "Keep screen on while charging")
-
-**Why this matters:** Without this setting, the screen turns off after a few minutes and RustDesk may not work properly.
-
-### Step 2: RustDesk Configuration
-
-#### For BYOD (Bring Your Own Device):
-1. Download RustDesk from Google Play Store
-2. Open RustDesk → Settings (gear icon)
-3. Tap **ID/Relay Server**
-4. Enter: `157.230.227.24` as the ID Server
-5. Paste the Key: `RweaRIQPdyQZxwRiCJ6BgZoNnFXPd5VfSvakliQ3heQ=`
-6. Tap **Apply**
-
-#### For Furnished Devices (SPEAR Ships):
-RustDesk is pre-installed and configured. Just verify the server settings.
-
-### Step 3: Grant RustDesk Permissions (CRITICAL)
-
-1. Open RustDesk
-2. When prompted for **Accessibility permission**, tap **Enable**
-3. Grant the permission
-4. **NEVER disable this permission** - input control won't work without it
-
-### Step 4: Pin RustDesk App (Prevent Accidental Closure)
-
-App pinning locks RustDesk on screen so it can't be accidentally closed.
-
-1. Go to **Settings → Security → App pinning** (or "Pin windows")
-2. Enable **App pinning**
-3. Open RustDesk app
-4. Tap the **Recent apps** button (square or three lines)
-5. Tap the RustDesk **app icon** at the top of its card
-6. Select **"Pin this app"**
-
-### Step 5: Disable Battery Optimization
-
-Prevent Android from killing RustDesk to save battery.
-
-1. Go to **Settings → Apps → RustDesk → Battery**
-2. Select **Unrestricted** (or "Don't optimize")
-
-### Step 6: Enable Start on Boot
-
-1. In RustDesk → Settings
-2. Enable **"Start on boot"**
-
-### Step 7: Turn OFF All Sounds (IMPORTANT)
-
-The device shouldn't disturb the patient.
-
-1. Go to **Settings → Sounds and vibration**
-2. Set all volume sliders to **0** (Ringtone, Media, Notifications, System)
-3. Enable **Silent mode** or **Do Not Disturb**
-4. Turn off **vibration**
-
-### Step 8: Turn ON Location Services (REQUIRED)
-
-Location is needed so check-in apps know where the device is.
-
-1. Go to **Settings → Location**
-2. Turn **ON** Location services
-3. Set to **High accuracy** mode
-4. Grant location permission to HHAeXchange or check-in app
-
-### Step 9: Disable Automatic App Updates
-
-Prevent updates from interrupting RustDesk.
-
-1. Open **Google Play Store**
-2. Tap profile icon → **Settings**
-3. Tap **Network preferences → Auto-update apps**
-4. Select **"Don't auto-update apps"**
-
-### Step 10: Place at Patient's Location
-
-**Good locations:**
-- Near the WiFi router (better signal)
-- On a shelf or table (stable surface)
-- Near a power outlet
-- Somewhere discreet the patient won't move
-
-**Avoid:**
-- Basements or rooms far from router
-- Near microwaves (interference)
-- Anywhere it might get unplugged
-- Direct sunlight (overheating)
-
-### Step 11: Connect to WiFi
-
-1. Go to **Settings → WiFi**
-2. Connect to the patient's WiFi network
-3. Prefer **2.4GHz networks** (better range through walls)
-4. Verify internet is working (open Chrome, load a page)
-
-### Step 12: Final Setup Checklist
-
-- [ ] Device is plugged in and charging
-- [ ] Developer Options enabled
+- [ ] Developer Options enabled (tap Build Number 7 times)
 - [ ] "Stay awake while charging" is ON
-- [ ] RustDesk is open and showing the main screen
-- [ ] RustDesk app is pinned
-- [ ] Battery optimization is disabled
+- [ ] RustDesk is installed
+- [ ] Server settings configured (via QR or manual)
+- [ ] Accessibility permission granted
+- [ ] Battery optimization disabled
 - [ ] Start on boot is enabled
-- [ ] All sounds are OFF
-- [ ] Location is ON
 - [ ] Auto-updates are disabled
-- [ ] Screen stays on (verify it doesn't turn off after a few minutes)
+- [ ] All sounds are OFF (optional - depends on use case)
+- [ ] Location is ON (if required for check-in apps)
+
+### For Furnished Device Users
+
+- [ ] Device is powered on and charging
+- [ ] Connected to patient's WiFi
+- [ ] RustDesk is showing main screen
+- [ ] 9-digit ID is noted
+- [ ] Permanent password is set
+
+### For All Users
+
+- [ ] iPhone has RustDesk installed
+- [ ] iPhone is configured with SPEAR server
+- [ ] Test connection works before leaving
+- [ ] Device is paired in SPEAR dashboard (new)
 
 ---
 
 ## Personal Phone Setup (iPhone/Android)
-
-The caregiver's personal phone needs RustDesk to connect to the Samsung remotely.
 
 ### Step 1: Download RustDesk
 
 - **iPhone:** [App Store](https://apps.apple.com/app/rustdesk-remote-desktop/id1581225015)
 - **Android:** [Play Store](https://play.google.com/store/apps/details?id=com.carriez.flutter_hbb)
 
-Or search "RustDesk" in your app store.
-
-### Step 2: Configure SPEAR Server (CRITICAL)
+### Step 2: Configure SPEAR Server
 
 1. Open RustDesk on your iPhone/Android
 2. Tap **Settings** (gear icon)
-3. Tap **ID/Relay Server**
-4. Enter: `157.230.227.24` as the ID Server
-5. Paste the Key: `RweaRIQPdyQZxwRiCJ6BgZoNnFXPd5VfSvakliQ3heQ=`
-6. Tap **Apply** or **Save**
+3. Tap **ID/Relay Server** or **Scan QR Code**
+4. If scanning: Point at the QR code from setup page
+5. If manual: Enter `157.230.227.24` and the key
 
 **Without this step, you cannot connect to your Samsung device.**
 
@@ -212,27 +272,22 @@ Or search "RustDesk" in your app store.
 1. Look at the Samsung device - RustDesk shows a **9-digit ID** (like 123 456 789)
 2. On your iPhone RustDesk, enter this ID in the "Remote ID" field
 3. Tap **Connect**
-4. Enter the password if prompted
+4. Enter the permanent password
 5. You're connected! You can now see and control the Samsung screen
 
-### Alternative: Use SPEAR Web Dashboard
+### Step 4: Enable Quick Access
 
-You can also connect through the web dashboard (no app needed):
-
-1. Open **spear-global.com** in Safari/Chrome
-2. Log in to your account
-3. Go to **Dashboard → Devices**
-4. Tap **Connect** on your device
-
-**Pro tip:** Add spear-global.com to your iPhone home screen for quick access (Share → Add to Home Screen)
+1. Enable "Remember Me" to save the password
+2. Add the device to your favorites/recent list
+3. **Pro tip:** Add spear-global.com to your iPhone home screen (Share > Add to Home Screen)
 
 ---
 
 ## Daily Check-In Process
 
 1. Open RustDesk on your iPhone
-2. Enter the Samsung's 9-digit ID (or select from history)
-3. Tap **Connect** → Enter password if needed
+2. Enter the Samsung's 9-digit ID (or select from history/favorites)
+3. Tap **Connect** > Password auto-fills if saved
 4. Open HHAeXchange on the Samsung and check in
 5. Disconnect when done
 
@@ -269,7 +324,7 @@ You can also connect through the web dashboard (no app needed):
 
 ### Input Control Not Working
 - Accessibility permission may not be granted
-- Go to Samsung Settings → Accessibility → find RustDesk → Enable
+- Go to Samsung Settings > Accessibility > find RustDesk > Enable
 - Restart RustDesk after granting permission
 
 ### Connection Drops Frequently
@@ -278,8 +333,25 @@ You can also connect through the web dashboard (no app needed):
 - Patient may have unplugged the device
 
 ### Password Issues
+- Set a permanent password: RustDesk > Settings > Security > Permanent Password
 - Contact SPEAR support if you need your device password reset
-- You can set a permanent password in RustDesk → Settings → Security → Permanent Password
+
+### Pairing Issues
+- Ensure you're using exactly 9 digits for the RustDesk ID
+- Check that the device isn't already paired to another user
+- Verify your subscription is active
+
+---
+
+## API Endpoints for Device Pairing
+
+### Client APIs
+- `GET /api/device/pairing-code` - Get user's pairing code
+- `POST /api/device/pair` - Pair device with code + 9-digit ID
+- `PUT /api/device/pair` - Update paired device
+
+### Admin APIs
+- `GET /api/admin/devices/unpaired` - Unpaired devices report
 
 ---
 
@@ -293,4 +365,4 @@ For additional help:
 ---
 
 *Last updated: January 2025*
-*Version: 1.0*
+*Version: 2.0 - Added Device Pairing System, Unified Setup Flow*

@@ -103,48 +103,79 @@ export const getSubscriptionStatus = createTool({
 
 export const getDeviceStatus = createTool({
   id: "getDeviceStatus",
-  description: "Get device connection status for a customer",
+  description:
+    "Get device information for a customer by their email address. Returns device details including name, RustDesk ID, connection status, model, and platform.",
   inputSchema: z.object({
-    customerId: z.string().optional().describe("Customer's unique ID"),
-    deviceId: z.string().optional().describe("Specific device ID"),
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address to look up their devices"),
   }),
   outputSchema: z.object({
     success: z.boolean(),
+    user: z
+      .object({
+        id: z.string(),
+        name: z.string().nullable(),
+        email: z.string(),
+        hasActiveSubscription: z.boolean(),
+        subscriptionStatus: z.string().nullable(),
+      })
+      .nullable(),
     devices: z.array(
       z.object({
-        deviceId: z.string(),
+        id: z.string(),
+        name: z.string().nullable(),
         rustDeskId: z.string().nullable(),
+        password: z.string().nullable(),
+        model: z.string(),
         status: z.string(),
+        platform: z.string(),
         lastSeen: z.string().nullable(),
         isOnline: z.boolean(),
       })
     ),
+    deviceCount: z.number(),
     error: z.string().optional(),
   }),
-  execute: async ({ customerId, deviceId }) => {
+  execute: async ({ email }) => {
     try {
-      let endpoint = "/admin/devices";
-      const params = new URLSearchParams();
-      if (customerId) params.append("customerId", customerId);
-      if (deviceId) params.append("deviceId", deviceId);
-      if (params.toString()) endpoint += `?${params.toString()}`;
+      const data = await spearApi(`/agent/devices?email=${encodeURIComponent(email)}`);
 
-      const data = await spearApi(endpoint);
-      if (data.devices) {
+      if (data.success && data.devices) {
         return {
           success: true,
+          user: data.user,
           devices: data.devices.map((d: any) => ({
-            deviceId: d.id,
+            id: d.id,
+            name: d.name,
             rustDeskId: d.rustDeskId,
+            password: d.password,
+            model: d.model,
             status: d.status,
+            platform: d.platform,
             lastSeen: d.lastSeen,
-            isOnline: d.status === "active",
+            isOnline: d.status === "active" || d.status === "online",
           })),
+          deviceCount: data.deviceCount,
         };
       }
-      return { success: false, devices: [], error: "No devices found" };
+
+      return {
+        success: false,
+        user: null,
+        devices: [],
+        deviceCount: 0,
+        error: data.error || "No devices found",
+      };
     } catch (error) {
-      return { success: false, devices: [], error: String(error) };
+      return {
+        success: false,
+        user: null,
+        devices: [],
+        deviceCount: 0,
+        error: String(error),
+      };
     }
   },
 });

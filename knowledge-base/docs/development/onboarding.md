@@ -74,12 +74,12 @@ cp .env.example .env.local
 DATABASE_URL=postgresql://postgres:MZJFKNWbjshCnQHDbLsetLFvkpvUDtqh@gondola.proxy.rlwy.net:31227/railway
 
 # NextAuth.js
-NEXTAUTH_SECRET=your-secret-key-here
+NEXTAUTH_SECRET=REPLACE_WITH_NEXTAUTH_SECRET
 NEXTAUTH_URL=http://localhost:3000
 
 # PayPal (use sandbox for development)
 PAYPAL_CLIENT_ID=your-sandbox-client-id
-PAYPAL_CLIENT_SECRET=your-sandbox-client-secret
+PAYPAL_CLIENT_SECRET=REPLACE_WITH_PAYPAL_CLIENT_SECRET
 PAYPAL_ENVIRONMENT=sandbox
 ```
 

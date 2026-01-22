@@ -40,7 +40,7 @@ This guide provides instructions for deploying the SPEAR application using Railw
 
 ```bash
 # Authentication
-NEXTAUTH_SECRET=production-secret-key
+NEXTAUTH_SECRET=REPLACE_WITH_NEXTAUTH_SECRET
 NEXTAUTH_URL=https://spear-global.com
 
 # Database
@@ -48,7 +48,7 @@ DATABASE_URL=postgresql://postgres:MZJFKNWbjshCnQHDbLsetLFvkpvUDtqh@gondola.prox
 
 # PayPal Production
 PAYPAL_CLIENT_ID=AXclM4bywjg_OwYBbpzek6HcjEo53xu9g7XmDSCDJ9ACnytqsPjAhAOgQmRz-DG7rj1M1cZjzibzlcqC
-PAYPAL_CLIENT_SECRET=EIPpyba0p0N6aGPGWydTuQYPKZH8n7RhYA3-rQtRokeaUMrBO3cAlyh0DB38xF1Bl0jiaK9z3dneW0Wk
+PAYPAL_CLIENT_SECRET=REPLACE_WITH_PAYPAL_CLIENT_SECRET
 PAYPAL_ENVIRONMENT=production
 ```
 
@@ -171,10 +171,10 @@ railway run pg_dump -U postgres -d railway > backup.sql
 ```bash
 # Old RustDesk configuration (no longer used)
 RUSTDESK_ANDROID_DEVICE_ID=1681512408
-RUSTDESK_ANDROID_PASSWORD=82AirmaN@$
+RUSTDESK_ANDROID_PASSWORD=REPLACE_WITH_RUSTDESK_ANDROID_PASSWORD
 
 # Old Stripe configuration (replaced by PayPal)
-STRIPE_SECRET_KEY=sk_test_...
+STRIPE_SECRET_KEY=REPLACE_WITH_STRIPE_SECRET_KEY
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 

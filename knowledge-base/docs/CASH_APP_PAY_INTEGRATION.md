@@ -406,7 +406,7 @@ Once SPEAR reaches significant transaction volume (>$50k/month), evaluate:
 ### For Stripe Integration
 ```env
 # Add to existing Stripe config
-STRIPE_SECRET_KEY=sk_live_xxx
+STRIPE_SECRET_KEY=REPLACE_WITH_STRIPE_SECRET_KEY
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
 ```
 

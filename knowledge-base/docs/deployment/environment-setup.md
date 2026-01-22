@@ -26,7 +26,7 @@ Development (Local)     →  Staging (Vercel Preview)  →  Production (Vercel)
 
 ```bash
 # Authentication
-NEXTAUTH_SECRET=production-secret-key-here
+NEXTAUTH_SECRET=REPLACE_WITH_NEXTAUTH_SECRET
 NEXTAUTH_URL=https://spear-global.com
 
 # Database (Railway Production)
@@ -34,7 +34,7 @@ DATABASE_URL=postgresql://postgres:MZJFKNWbjshCnQHDbLsetLFvkpvUDtqh@gondola.prox
 
 # PayPal Production (DO NOT CHANGE)
 PAYPAL_CLIENT_ID=AXclM4bywjg_OwYBbpzek6HcjEo53xu9g7XmDSCDJ9ACnytqsPjAhAOgQmRz-DG7rj1M1cZjzibzlcqC
-PAYPAL_CLIENT_SECRET=EIPpyba0p0N6aGPGWydTuQYPKZH8n7RhYA3-rQtRokeaUMrBO3cAlyh0DB38xF1Bl0jiaK9z3dneW0Wk
+PAYPAL_CLIENT_SECRET=REPLACE_WITH_PAYPAL_CLIENT_SECRET
 PAYPAL_ENVIRONMENT=production
 
 # Optional: Webhook configuration
@@ -64,7 +64,7 @@ vercel env ls
 
 ```bash
 # Required for local development
-NEXTAUTH_SECRET=local-development-secret
+NEXTAUTH_SECRET=REPLACE_WITH_NEXTAUTH_SECRET
 NEXTAUTH_URL=http://localhost:3000
 
 # Database options
@@ -76,7 +76,7 @@ DATABASE_URL=postgresql://username:password@localhost:5432/spear_dev
 
 # PayPal Sandbox for testing
 PAYPAL_CLIENT_ID=your-sandbox-client-id
-PAYPAL_CLIENT_SECRET=your-sandbox-client-secret
+PAYPAL_CLIENT_SECRET=REPLACE_WITH_PAYPAL_CLIENT_SECRET
 PAYPAL_ENVIRONMENT=sandbox
 ```
 
@@ -102,7 +102,7 @@ nano .env.local
 
 ```bash
 # Staging environment variables
-NEXTAUTH_SECRET=staging-secret-key
+NEXTAUTH_SECRET=REPLACE_WITH_NEXTAUTH_SECRET
 NEXTAUTH_URL=https://spear-production-preview-branch.vercel.app
 
 # Database (same as production for data consistency)
@@ -110,7 +110,7 @@ DATABASE_URL=postgresql://postgres:MZJFKNWbjshCnQHDbLsetLFvkpvUDtqh@gondola.prox
 
 # PayPal Sandbox for safe testing
 PAYPAL_CLIENT_ID=sandbox-client-id
-PAYPAL_CLIENT_SECRET=sandbox-client-secret
+PAYPAL_CLIENT_SECRET=REPLACE_WITH_PAYPAL_CLIENT_SECRET
 PAYPAL_ENVIRONMENT=sandbox
 ```
 
@@ -208,7 +208,7 @@ const prisma = new PrismaClient({
 ```bash
 # Sandbox credentials (example)
 PAYPAL_CLIENT_ID=sandbox-client-id-here
-PAYPAL_CLIENT_SECRET=sandbox-client-secret-here
+PAYPAL_CLIENT_SECRET=REPLACE_WITH_PAYPAL_CLIENT_SECRET
 PAYPAL_ENVIRONMENT=sandbox
 ```
 

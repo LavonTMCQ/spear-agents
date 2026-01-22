@@ -16,6 +16,8 @@
 | Process a refund | [Refund Process](./processes/refund-process.md) |
 | Manage devices | [Device Management](#device-management) |
 | Help with BYOD setup | [BYOD Setup](./features/device/byod-setup.md) |
+| Pair a device | [Device Pairing](./features/device/device-pairing.md) |
+| Furnished device setup | [Device Setup Guide](./features/DEVICE_SETUP_GUIDE.md) |
 | Use the admin dashboard | [Admin Guide](#admin-dashboard) |
 | Integrate with API | [API Reference](#api-reference) |
 | Understand business processes | [Processes](#business-processes) |
@@ -118,7 +120,10 @@ To find customer information:
 | [Device Lifecycle](./processes/device-lifecycle.md) | Process | Device journey |
 | [RustDesk Connection](./features/device/rustdesk.md) | Feature | Remote access |
 | [Device Status](./reference/device-status.md) | Reference | Status codes |
-| [BYOD Setup](./features/device/byod.md) | Feature | Bring your own device |
+| [BYOD Setup](./features/device/byod-setup.md) | Feature | Bring your own device (7 steps) |
+| [Furnished Setup](./features/device/furnished-setup.md) | Feature | SPEAR-shipped device (4 steps) |
+| [Device Pairing](./features/device/device-pairing.md) | Feature | Self-service device registration |
+| [Device Setup Guide](./features/DEVICE_SETUP_GUIDE.md) | Guide | Complete setup documentation |
 
 ### Admin Dashboard
 | Document | Type | Description |

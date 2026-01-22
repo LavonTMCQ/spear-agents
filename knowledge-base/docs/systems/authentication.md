@@ -271,7 +271,7 @@ if (!session) redirect("/login");
 
 ```bash
 # NextAuth.js configuration
-NEXTAUTH_SECRET=your-secret-key-here
+NEXTAUTH_SECRET=REPLACE_WITH_NEXTAUTH_SECRET
 NEXTAUTH_URL=https://spear-global.com
 
 # Database connection
