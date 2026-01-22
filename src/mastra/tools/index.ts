@@ -9,6 +9,8 @@ export {
   getSupportTickets,
   sendPasswordReset,
   searchKnowledgeBase,
+  getOrderStatus,
+  validateCoupon,
 } from "./customer-tools";
 
 // Admin tools (for internal ops agent only)

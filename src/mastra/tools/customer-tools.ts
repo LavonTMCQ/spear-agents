@@ -516,3 +516,166 @@ export const searchKnowledgeBase = createTool({
     };
   },
 });
+
+export const getOrderStatus = createTool({
+  id: "getOrderStatus",
+  description:
+    "Get order and shipping information for a customer by their email address. Returns order status, tracking number, and shipping details. Use this when customers ask 'where is my device?' or 'what's my order status?'",
+  inputSchema: z.object({
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address to look up their orders"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    user: z
+      .object({
+        id: z.string(),
+        name: z.string().nullable(),
+        email: z.string(),
+      })
+      .nullable(),
+    orders: z.array(
+      z.object({
+        id: z.string(),
+        status: z.string(),
+        statusLabel: z.string(),
+        statusDescription: z.string(),
+        subscriptionPlan: z.string(),
+        amount: z.number(),
+        trackingNumber: z.string().nullable(),
+        hasTracking: z.boolean(),
+        shippingAddress: z
+          .object({
+            street: z.string().nullable(),
+            city: z.string().nullable(),
+            state: z.string().nullable(),
+            zip: z.string().nullable(),
+            country: z.string(),
+          })
+          .nullable(),
+        createdAt: z.string().nullable(),
+        statusHistory: z.array(
+          z.object({
+            status: z.string(),
+            statusLabel: z.string(),
+            notes: z.string().nullable(),
+            date: z.string().nullable(),
+          })
+        ),
+      })
+    ),
+    orderCount: z.number(),
+    latestOrder: z
+      .object({
+        id: z.string(),
+        status: z.string(),
+        statusLabel: z.string(),
+        statusDescription: z.string(),
+        trackingNumber: z.string().nullable(),
+        hasTracking: z.boolean(),
+      })
+      .nullable(),
+    message: z.string().optional(),
+    error: z.string().optional(),
+  }),
+  execute: async ({ email }) => {
+    try {
+      const data = await spearApi(`/agent/orders?email=${encodeURIComponent(email)}`);
+
+      if (data.success) {
+        return {
+          success: true,
+          user: data.user,
+          orders: data.orders || [],
+          orderCount: data.orderCount || 0,
+          latestOrder: data.latestOrder || null,
+          message: data.message,
+        };
+      }
+
+      return {
+        success: false,
+        user: null,
+        orders: [],
+        orderCount: 0,
+        latestOrder: null,
+        error: data.error || "Failed to fetch orders",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        user: null,
+        orders: [],
+        orderCount: 0,
+        latestOrder: null,
+        error: String(error),
+      };
+    }
+  },
+});
+
+export const validateCoupon = createTool({
+  id: "validateCoupon",
+  description:
+    "Validate a coupon code to check if it's valid and what discount it provides. Use this when a customer asks if their coupon code is valid. NOTE: Do NOT give out or suggest coupon codes - only validate codes the customer already has.",
+  inputSchema: z.object({
+    code: z.string().min(1).describe("The coupon code to validate"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    valid: z.boolean(),
+    code: z.string(),
+    discountType: z.string().optional(),
+    discountValue: z.number().optional(),
+    discountDescription: z.string().optional(),
+    discountAmount: z.string().optional(),
+    applicablePlans: z.array(z.string()).optional(),
+    applicablePlansDescription: z.string().optional(),
+    validUntil: z.string().nullable().optional(),
+    usesRemaining: z.number().nullable().optional(),
+    reason: z.string().optional(),
+    message: z.string().optional(),
+    error: z.string().optional(),
+  }),
+  execute: async ({ code }) => {
+    try {
+      const data = await spearApi(
+        `/agent/coupons/validate?code=${encodeURIComponent(code)}`
+      );
+
+      if (data.success) {
+        return {
+          success: true,
+          valid: data.valid,
+          code: data.code,
+          discountType: data.discountType,
+          discountValue: data.discountValue,
+          discountDescription: data.discountDescription,
+          discountAmount: data.discountAmount,
+          applicablePlans: data.applicablePlans,
+          applicablePlansDescription: data.applicablePlansDescription,
+          validUntil: data.validUntil,
+          usesRemaining: data.usesRemaining,
+          reason: data.reason,
+          message: data.message,
+        };
+      }
+
+      return {
+        success: false,
+        valid: false,
+        code: code.toUpperCase(),
+        error: data.error || "Failed to validate coupon",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        valid: false,
+        code: code.toUpperCase(),
+        error: String(error),
+      };
+    }
+  },
+});

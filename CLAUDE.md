@@ -30,6 +30,8 @@ SPEAR Agents is the AI assistant system for the SPEAR remote device management p
    - `/api/agent/devices` - Device lookup for agents
    - `/api/agent/subscription` - Subscription status lookup for agents
    - `/api/agent/tickets` - Support ticket creation and viewing for agents
+   - `/api/agent/orders` - Order and shipping status lookup for agents
+   - `/api/agent/coupons/validate` - Coupon code validation for agents
 
 2. **SPEAR Agents** (`spear-agents/`) - Deployed on Railway
    - Contains the Mastra agents and tools
@@ -241,6 +243,8 @@ The agents use pgvector for:
 - `lookupCustomer` - Look up customer by email
 - `getSubscriptionStatus` - Get subscription details by customer email
 - `getDeviceStatus` - Get device info by customer email
+- `getOrderStatus` - Get order/shipping status and tracking by email
+- `validateCoupon` - Check if a coupon code is valid (don't give out codes!)
 - `checkFounderSlots` - Check founder pricing availability
 - `checkRefundEligibility` - Check if order qualifies for refund
 - `createSupportTicket` - Create support ticket by customer email (appears in admin dashboard)
@@ -256,3 +260,16 @@ The agents use pgvector for:
 - `assignDevice` - Assign device to customer
 - `getRevenueMetrics` - Get revenue data
 - `listDisputes` - List payment disputes
+
+## Future Development
+
+### RustDesk Integration (Planned)
+Connect agents to RustDesk to enable:
+- Real-time device connection status check ("is my device online?")
+- Remote connection troubleshooting
+- Device connectivity diagnostics
+
+This will require:
+1. RustDesk API integration in SPEAR
+2. New `/api/agent/rustdesk/status` endpoint
+3. New `checkDeviceConnection` tool for agents

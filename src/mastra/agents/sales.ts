@@ -1,6 +1,6 @@
 import { Agent } from "@mastra/core/agent";
 import { google } from "@ai-sdk/google";
-import { checkFounderSlots, searchKnowledgeBase } from "../tools";
+import { checkFounderSlots, searchKnowledgeBase, validateCoupon, getOrderStatus } from "../tools";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES, SPEAR_PRICING } from "../shared/constants";
 import { sharedMemory } from "../shared/memory";
 
@@ -45,6 +45,9 @@ ${SPEAR_BUSINESS_RULES}
 IMPORTANT: Before quoting founder's pricing, you MUST check availability via
 the checkFounderSlots tool. Only 100 total spots at this price.
 
+COUPON POLICY: You can VALIDATE coupon codes customers already have, but you must
+NEVER give out, suggest, or create coupon codes. Only validate codes they provide.
+
 Guidelines:
 Be honest about what SPEAR can and cannot do
 Don't over promise or make guarantees
@@ -52,6 +55,8 @@ Focus on value, not just price
 If someone isn't a good fit, be honest
 Guide to signup but don't be pushy
 Use searchKnowledgeBase for product details or FAQs you want to quote precisely
+Use validateCoupon when customers ask if their coupon code is valid
+Use getOrderStatus when customers ask about their order or shipping status
 
   You have access to feature documentation, pricing information, and FAQs.`,
   model: google("gemini-3-pro-preview"),
@@ -59,5 +64,7 @@ Use searchKnowledgeBase for product details or FAQs you want to quote precisely
   tools: {
     checkFounderSlots,
     searchKnowledgeBase,
+    validateCoupon,
+    getOrderStatus,
   },
 });

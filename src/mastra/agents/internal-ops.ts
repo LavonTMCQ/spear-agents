@@ -16,6 +16,8 @@ import {
   assignDevice,
   getRevenueMetrics,
   listDisputes,
+  getOrderStatus,
+  validateCoupon,
 } from "../tools";
 import { sharedMemory } from "../shared/memory";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
@@ -67,5 +69,7 @@ ${SPEAR_BUSINESS_RULES}
     assignDevice,
     getRevenueMetrics,
     listDisputes,
+    getOrderStatus,
+    validateCoupon,
   },
 });

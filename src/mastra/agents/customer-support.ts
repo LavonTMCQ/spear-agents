@@ -10,6 +10,8 @@ import {
   getSupportTickets,
   sendPasswordReset,
   searchKnowledgeBase,
+  getOrderStatus,
+  validateCoupon,
 } from "../tools";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
 import { sharedMemory } from "../shared/memory";
@@ -66,5 +68,7 @@ Use searchKnowledgeBase when you need exact troubleshooting steps or policy lang
     getSupportTickets,
     sendPasswordReset,
     searchKnowledgeBase,
+    getOrderStatus,
+    validateCoupon,
   },
 });
