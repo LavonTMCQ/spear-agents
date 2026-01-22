@@ -18,6 +18,8 @@ export {
   getQuickDeviceInfo,
   getOnboardingProgress,
   troubleshootConnection,
+  getPageLink,
+  getMultiplePageLinks,
 } from "./customer-tools";
 
 // Admin tools (for internal ops agent only)

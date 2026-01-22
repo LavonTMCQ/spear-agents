@@ -1,6 +1,6 @@
 import { Agent } from "@mastra/core/agent";
 import { google } from "@ai-sdk/google";
-import { checkFounderSlots, searchKnowledgeBase, validateCoupon, getOrderStatus } from "../tools";
+import { checkFounderSlots, searchKnowledgeBase, validateCoupon, getOrderStatus, getPageLink, getMultiplePageLinks } from "../tools";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES, SPEAR_PRICING } from "../shared/constants";
 import { sharedMemory } from "../shared/memory";
 
@@ -66,5 +66,7 @@ Use getOrderStatus when customers ask about their order or shipping status
     searchKnowledgeBase,
     validateCoupon,
     getOrderStatus,
+    getPageLink,
+    getMultiplePageLinks,
   },
 });

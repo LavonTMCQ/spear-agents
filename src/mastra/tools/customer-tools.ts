@@ -1337,3 +1337,210 @@ export const troubleshootConnection = createTool({
     };
   },
 });
+
+const SPEAR_BASE_URL = "https://www.spear-global.com";
+
+// Page link definitions
+const PAGE_LINKS: Record<
+  string,
+  { url: string; title: string; description: string }
+> = {
+  dashboard: {
+    url: `${SPEAR_BASE_URL}/dashboard`,
+    title: "Your Dashboard",
+    description: "Access your devices, subscription status, and account overview",
+  },
+  pricing: {
+    url: `${SPEAR_BASE_URL}/pricing`,
+    title: "Pricing & Plans",
+    description: "View subscription plans and pricing options",
+  },
+  byod_setup: {
+    url: `${SPEAR_BASE_URL}/byod-setup`,
+    title: "BYOD Setup Guide",
+    description: "Step-by-step guide to set up your own device with SPEAR",
+  },
+  subscription: {
+    url: `${SPEAR_BASE_URL}/subscription`,
+    title: "Subscription Management",
+    description: "Manage your subscription, view billing, change plans",
+  },
+  terms: {
+    url: `${SPEAR_BASE_URL}/terms`,
+    title: "Terms of Service",
+    description: "Our terms of service and legal agreements",
+  },
+  refund_policy: {
+    url: `${SPEAR_BASE_URL}/subscription-policy`,
+    title: "Refund & Subscription Policy",
+    description: "Our 7-day refund policy and subscription terms",
+  },
+  privacy: {
+    url: `${SPEAR_BASE_URL}/privacy`,
+    title: "Privacy Policy",
+    description: "How we handle and protect your data",
+  },
+  forgot_password: {
+    url: `${SPEAR_BASE_URL}/forgot-password`,
+    title: "Reset Password",
+    description: "Reset your account password",
+  },
+  login: {
+    url: `${SPEAR_BASE_URL}/login`,
+    title: "Sign In",
+    description: "Sign in to your SPEAR account",
+  },
+  signup: {
+    url: `${SPEAR_BASE_URL}/signup`,
+    title: "Create Account",
+    description: "Create a new SPEAR account",
+  },
+  contact: {
+    url: `${SPEAR_BASE_URL}/contact`,
+    title: "Contact Support",
+    description: "Get in touch with our support team",
+  },
+  faq: {
+    url: `${SPEAR_BASE_URL}/faq`,
+    title: "FAQ",
+    description: "Frequently asked questions about SPEAR",
+  },
+  how_it_works: {
+    url: `${SPEAR_BASE_URL}/how-it-works`,
+    title: "How It Works",
+    description: "Learn how SPEAR remote device access works",
+  },
+  download: {
+    url: `${SPEAR_BASE_URL}/download`,
+    title: "Download RustDesk",
+    description: "Download RustDesk client for your computer or phone",
+  },
+  home: {
+    url: SPEAR_BASE_URL,
+    title: "SPEAR Home",
+    description: "SPEAR homepage",
+  },
+};
+
+export const getPageLink = createTool({
+  id: "getPageLink",
+  description:
+    "Get a direct link to a SPEAR page. Use this to provide customers with clickable links instead of just describing where to go. Available pages: dashboard, pricing, byod_setup, subscription, terms, refund_policy, privacy, forgot_password, login, signup, contact, faq, how_it_works, download, home",
+  inputSchema: z.object({
+    page: z
+      .enum([
+        "dashboard",
+        "pricing",
+        "byod_setup",
+        "subscription",
+        "terms",
+        "refund_policy",
+        "privacy",
+        "forgot_password",
+        "login",
+        "signup",
+        "contact",
+        "faq",
+        "how_it_works",
+        "download",
+        "home",
+      ])
+      .describe("The page to get a link for"),
+    context: z
+      .string()
+      .optional()
+      .describe("Optional context for why you're sending this link"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    url: z.string(),
+    title: z.string(),
+    description: z.string(),
+    markdown: z.string(),
+  }),
+  execute: async ({ page, context }) => {
+    const pageInfo = PAGE_LINKS[page];
+
+    if (!pageInfo) {
+      return {
+        success: false,
+        url: SPEAR_BASE_URL,
+        title: "SPEAR",
+        description: "Page not found",
+        markdown: `[SPEAR](${SPEAR_BASE_URL})`,
+      };
+    }
+
+    return {
+      success: true,
+      url: pageInfo.url,
+      title: pageInfo.title,
+      description: pageInfo.description,
+      markdown: `[${pageInfo.title}](${pageInfo.url})`,
+    };
+  },
+});
+
+export const getMultiplePageLinks = createTool({
+  id: "getMultiplePageLinks",
+  description:
+    "Get multiple page links at once. Use when you need to provide several relevant links to a customer, like 'Here are some helpful resources...'",
+  inputSchema: z.object({
+    pages: z
+      .array(
+        z.enum([
+          "dashboard",
+          "pricing",
+          "byod_setup",
+          "subscription",
+          "terms",
+          "refund_policy",
+          "privacy",
+          "forgot_password",
+          "login",
+          "signup",
+          "contact",
+          "faq",
+          "how_it_works",
+          "download",
+          "home",
+        ])
+      )
+      .describe("List of pages to get links for"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    links: z.array(
+      z.object({
+        page: z.string(),
+        url: z.string(),
+        title: z.string(),
+        description: z.string(),
+        markdown: z.string(),
+      })
+    ),
+    markdownList: z.string(),
+  }),
+  execute: async ({ pages }) => {
+    const links = pages.map((page) => {
+      const pageInfo = PAGE_LINKS[page];
+      return {
+        page,
+        url: pageInfo?.url || SPEAR_BASE_URL,
+        title: pageInfo?.title || "SPEAR",
+        description: pageInfo?.description || "",
+        markdown: pageInfo ? `[${pageInfo.title}](${pageInfo.url})` : `[SPEAR](${SPEAR_BASE_URL})`,
+      };
+    });
+
+    const markdownList = links
+      .map((l) => `- ${l.markdown} - ${l.description}`)
+      .join("\n");
+
+    return {
+      success: true,
+      links,
+      markdownList,
+    };
+  },
+});

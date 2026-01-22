@@ -263,6 +263,8 @@ The agents use pgvector for:
 - `getQuickDeviceInfo` - Quick RustDesk ID/password reference for customer devices
 - `getOnboardingProgress` - Onboarding progress tracking with next steps (BYOD/Furnished)
 - `troubleshootConnection` - Interactive connection troubleshooter with targeted diagnoses
+- `getPageLink` - Get direct link to a SPEAR page (dashboard, pricing, setup, etc.)
+- `getMultiplePageLinks` - Get multiple page links at once for helpful resources
 
 ### Admin Tools (admin-tools.ts)
 - `getOrderDetails` - Get order information
