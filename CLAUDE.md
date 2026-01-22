@@ -35,6 +35,8 @@ SPEAR Agents is the AI assistant system for the SPEAR remote device management p
    - `/api/agent/billing` - Billing history and payment summary for agents
    - `/api/agent/resend-setup` - Resend welcome/setup email for agents
    - `/api/agent/cancel-request` - Submit cancellation request (creates ticket)
+   - `/api/agent/health-check` - Comprehensive account health check
+   - `/api/agent/onboarding` - Onboarding progress tracking (BYOD/Furnished)
 
 2. **SPEAR Agents** (`spear-agents/`) - Deployed on Railway
    - Contains the Mastra agents and tools
@@ -257,6 +259,10 @@ The agents use pgvector for:
 - `getSupportTickets` - View customer's support tickets by email
 - `sendPasswordReset` - Trigger password reset email
 - `searchKnowledgeBase` - RAG search for policies/docs
+- `checkAccountHealth` - Comprehensive account health check (subscription, devices, orders, issues)
+- `getQuickDeviceInfo` - Quick RustDesk ID/password reference for customer devices
+- `getOnboardingProgress` - Onboarding progress tracking with next steps (BYOD/Furnished)
+- `troubleshootConnection` - Interactive connection troubleshooter with targeted diagnoses
 
 ### Admin Tools (admin-tools.ts)
 - `getOrderDetails` - Get order information

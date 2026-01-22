@@ -21,6 +21,10 @@ import {
   getBillingHistory,
   resendSetupEmail,
   requestCancellation,
+  checkAccountHealth,
+  getQuickDeviceInfo,
+  getOnboardingProgress,
+  troubleshootConnection,
 } from "../tools";
 import { sharedMemory } from "../shared/memory";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
@@ -77,5 +81,9 @@ ${SPEAR_BUSINESS_RULES}
     getBillingHistory,
     resendSetupEmail,
     requestCancellation,
+    checkAccountHealth,
+    getQuickDeviceInfo,
+    getOnboardingProgress,
+    troubleshootConnection,
   },
 });

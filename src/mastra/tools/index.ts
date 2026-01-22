@@ -14,6 +14,10 @@ export {
   getBillingHistory,
   resendSetupEmail,
   requestCancellation,
+  checkAccountHealth,
+  getQuickDeviceInfo,
+  getOnboardingProgress,
+  troubleshootConnection,
 } from "./customer-tools";
 
 // Admin tools (for internal ops agent only)

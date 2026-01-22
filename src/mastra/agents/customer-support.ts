@@ -15,6 +15,10 @@ import {
   getBillingHistory,
   resendSetupEmail,
   requestCancellation,
+  checkAccountHealth,
+  getQuickDeviceInfo,
+  getOnboardingProgress,
+  troubleshootConnection,
 } from "../tools";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
 import { sharedMemory } from "../shared/memory";
@@ -76,5 +80,9 @@ Use searchKnowledgeBase when you need exact troubleshooting steps or policy lang
     getBillingHistory,
     resendSetupEmail,
     requestCancellation,
+    checkAccountHealth,
+    getQuickDeviceInfo,
+    getOnboardingProgress,
+    troubleshootConnection,
   },
 });

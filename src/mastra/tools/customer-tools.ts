@@ -856,3 +856,484 @@ export const requestCancellation = createTool({
     }
   },
 });
+
+export const checkAccountHealth = createTool({
+  id: "checkAccountHealth",
+  description:
+    "Comprehensive account health check - shows subscription status, device status, payment status, and any issues that need attention. Use this when customers ask 'is everything okay with my account?' or 'check my account' or as a first step when helping customers.",
+  inputSchema: z.object({
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address to check account health"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    user: z
+      .object({
+        id: z.string(),
+        name: z.string().nullable(),
+        email: z.string(),
+        memberSince: z.string().nullable(),
+        accountAge: z.string(),
+      })
+      .nullable(),
+    health: z
+      .object({
+        overall: z.object({
+          status: z.enum(["good", "warning", "action_needed"]),
+          message: z.string(),
+        }),
+        subscription: z.object({
+          status: z.enum(["good", "warning", "action_needed"]),
+          message: z.string(),
+          details: z
+            .object({
+              planType: z.string().nullable(),
+              currentPeriodEnd: z.string().nullable(),
+              cancelAtPeriodEnd: z.boolean(),
+            })
+            .nullable(),
+        }),
+        devices: z.object({
+          status: z.enum(["good", "warning", "action_needed"]),
+          message: z.string(),
+          total: z.number(),
+          online: z.number(),
+        }),
+        order: z.object({
+          status: z.enum(["good", "warning", "action_needed"]),
+          message: z.string(),
+        }),
+      })
+      .nullable(),
+    issues: z.array(
+      z.object({
+        type: z.string(),
+        severity: z.enum(["low", "medium", "high"]),
+        message: z.string(),
+        action: z.string().optional(),
+      })
+    ),
+    openTickets: z.number(),
+    error: z.string().optional(),
+  }),
+  execute: async ({ email }) => {
+    try {
+      const data = await spearApi(`/agent/health-check?email=${encodeURIComponent(email)}`);
+
+      if (data.success) {
+        return {
+          success: true,
+          user: data.user,
+          health: data.health,
+          issues: data.issues || [],
+          openTickets: data.openTickets || 0,
+        };
+      }
+
+      return {
+        success: false,
+        user: null,
+        health: null,
+        issues: [],
+        openTickets: 0,
+        error: data.error || "Failed to check account health",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        user: null,
+        health: null,
+        issues: [],
+        openTickets: 0,
+        error: String(error),
+      };
+    }
+  },
+});
+
+export const getQuickDeviceInfo = createTool({
+  id: "getQuickDeviceInfo",
+  description:
+    "Quick access to customer's device credentials - RustDesk ID and password. Use when customers ask 'what's my device ID?' or 'what's my RustDesk password?' or need to connect to their device. Returns only the essential connection info.",
+  inputSchema: z.object({
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    devices: z.array(
+      z.object({
+        name: z.string().nullable(),
+        rustDeskId: z.string().nullable(),
+        password: z.string().nullable(),
+        status: z.string(),
+        isOnline: z.boolean(),
+      })
+    ),
+    deviceCount: z.number(),
+    message: z.string().optional(),
+    error: z.string().optional(),
+  }),
+  execute: async ({ email }) => {
+    try {
+      const data = await spearApi(`/agent/devices?email=${encodeURIComponent(email)}`);
+
+      if (data.success && data.devices) {
+        const devices = data.devices.map((d: any) => ({
+          name: d.name || `Device ${d.rustDeskId || "Unknown"}`,
+          rustDeskId: d.rustDeskId,
+          password: d.password,
+          status: d.status,
+          isOnline: d.status === "active" || d.status === "online",
+        }));
+
+        if (devices.length === 0) {
+          return {
+            success: true,
+            devices: [],
+            deviceCount: 0,
+            message: "No devices found on this account. Need help setting one up?",
+          };
+        }
+
+        return {
+          success: true,
+          devices,
+          deviceCount: devices.length,
+        };
+      }
+
+      return {
+        success: false,
+        devices: [],
+        deviceCount: 0,
+        error: data.error || "Could not retrieve device info",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        devices: [],
+        deviceCount: 0,
+        error: String(error),
+      };
+    }
+  },
+});
+
+export const getOnboardingProgress = createTool({
+  id: "getOnboardingProgress",
+  description:
+    "Check a customer's onboarding/setup progress. Shows which steps are complete, what's next, and provides guidance. Use when new customers ask 'how do I get started?' or 'what do I do next?' or 'am I set up correctly?'",
+  inputSchema: z.object({
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    user: z
+      .object({
+        id: z.string(),
+        name: z.string().nullable(),
+        email: z.string(),
+      })
+      .nullable(),
+    onboarding: z
+      .object({
+        status: z.enum(["not_started", "in_progress", "complete"]),
+        flowType: z.enum(["byod", "furnished"]),
+        progress: z.object({
+          completed: z.number(),
+          total: z.number(),
+          percent: z.number(),
+        }),
+        currentStep: z
+          .object({
+            id: z.string(),
+            name: z.string(),
+            description: z.string(),
+            helpText: z.string().optional(),
+          })
+          .nullable(),
+        nextAction: z.string(),
+        steps: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            description: z.string(),
+            completed: z.boolean(),
+            current: z.boolean(),
+            helpText: z.string().optional(),
+          })
+        ),
+      })
+      .nullable(),
+    error: z.string().optional(),
+  }),
+  execute: async ({ email }) => {
+    try {
+      const data = await spearApi(`/agent/onboarding?email=${encodeURIComponent(email)}`);
+
+      if (data.success) {
+        return {
+          success: true,
+          user: data.user,
+          onboarding: data.onboarding,
+        };
+      }
+
+      return {
+        success: false,
+        user: null,
+        onboarding: null,
+        error: data.error || "Failed to get onboarding progress",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        user: null,
+        onboarding: null,
+        error: String(error),
+      };
+    }
+  },
+});
+
+export const troubleshootConnection = createTool({
+  id: "troubleshootConnection",
+  description:
+    "Interactive connection troubleshooter. Use when customers report 'device won't connect', 'connection issues', 'device offline', or similar problems. Gathers info about their situation and provides targeted troubleshooting steps.",
+  inputSchema: z.object({
+    email: z.string().email().describe("Customer's email address"),
+    symptom: z
+      .enum([
+        "device_offline",
+        "connection_timeout",
+        "connection_drops",
+        "wrong_password",
+        "other",
+      ])
+      .describe("The main symptom they're experiencing"),
+    additionalInfo: z
+      .string()
+      .optional()
+      .describe("Any additional details about the issue"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    diagnosis: z.string(),
+    steps: z.array(
+      z.object({
+        step: z.number(),
+        action: z.string(),
+        details: z.string().optional(),
+      })
+    ),
+    deviceStatus: z
+      .object({
+        name: z.string().nullable(),
+        rustDeskId: z.string().nullable(),
+        status: z.string(),
+        isOnline: z.boolean(),
+      })
+      .nullable(),
+    escalate: z.boolean(),
+    escalateReason: z.string().optional(),
+  }),
+  execute: async ({ email, symptom, additionalInfo }) => {
+    // First, get device status
+    let deviceStatus = null;
+    try {
+      const deviceData = await spearApi(`/agent/devices?email=${encodeURIComponent(email)}`);
+      if (deviceData.success && deviceData.devices && deviceData.devices.length > 0) {
+        const d = deviceData.devices[0];
+        deviceStatus = {
+          name: d.name,
+          rustDeskId: d.rustDeskId,
+          status: d.status,
+          isOnline: d.status === "active" || d.status === "online",
+        };
+      }
+    } catch (e) {
+      // Continue without device status
+    }
+
+    // Build troubleshooting response based on symptom
+    const troubleshootingGuides: Record<
+      string,
+      { diagnosis: string; steps: { step: number; action: string; details?: string }[] }
+    > = {
+      device_offline: {
+        diagnosis:
+          "Device showing offline usually means the device is powered off, lost internet, or RustDesk isn't running.",
+        steps: [
+          {
+            step: 1,
+            action: "Check if the device is powered on",
+            details: "Look for screen activity or power indicator light",
+          },
+          {
+            step: 2,
+            action: "Verify WiFi connection on the device",
+            details: "Look for the WiFi icon in the status bar. If not connected, reconnect to WiFi.",
+          },
+          {
+            step: 3,
+            action: "Open the RustDesk app on the device",
+            details: "RustDesk must be running for remote connections to work. Open the app and make sure it shows your ID.",
+          },
+          {
+            step: 4,
+            action: "Restart the device if still offline",
+            details: "Power off completely, wait 10 seconds, then power back on.",
+          },
+          {
+            step: 5,
+            action: "Check the dashboard again",
+            details: "After a minute, refresh the SPEAR dashboard to see if device shows online.",
+          },
+        ],
+      },
+      connection_timeout: {
+        diagnosis:
+          "Connection timeouts usually indicate network issues or the device not responding.",
+        steps: [
+          {
+            step: 1,
+            action: "Try connecting again",
+            details: "Sometimes connections work on retry. Click Connect again.",
+          },
+          {
+            step: 2,
+            action: "Check your own internet connection",
+            details: "Make sure you have stable internet where you're connecting from.",
+          },
+          {
+            step: 3,
+            action: "Verify device has good WiFi signal",
+            details: "If device is far from router, try moving it closer.",
+          },
+          {
+            step: 4,
+            action: "Restart RustDesk on the device",
+            details: "Close and reopen RustDesk app on the device.",
+          },
+          {
+            step: 5,
+            action: "Try connecting from mobile data",
+            details: "If on restricted network (work, hospital), try using phone hotspot instead.",
+          },
+        ],
+      },
+      connection_drops: {
+        diagnosis:
+          "Frequent disconnections are usually caused by unstable WiFi or device sleep settings.",
+        steps: [
+          {
+            step: 1,
+            action: "Check WiFi signal strength",
+            details: "Move device closer to WiFi router if signal is weak.",
+          },
+          {
+            step: 2,
+            action: "Disable battery optimization for RustDesk",
+            details: "Go to device Settings > Apps > RustDesk > Battery > Don't optimize",
+          },
+          {
+            step: 3,
+            action: "Keep device plugged in",
+            details: "Connect to charger to prevent battery saver from closing apps.",
+          },
+          {
+            step: 4,
+            action: "Disable auto-sleep or extend timeout",
+            details: "Settings > Display > Screen timeout > set to longer duration or Never when charging",
+          },
+          {
+            step: 5,
+            action: "Check for WiFi interference",
+            details: "Other devices, microwaves, or thick walls can interfere. Try different location.",
+          },
+        ],
+      },
+      wrong_password: {
+        diagnosis: "Password errors happen when the password was changed or entered incorrectly.",
+        steps: [
+          {
+            step: 1,
+            action: "Copy-paste the password instead of typing",
+            details: "Avoid typos by copying from dashboard and pasting.",
+          },
+          {
+            step: 2,
+            action: "Check password directly on the device",
+            details: "Open RustDesk on the device and look at the password shown there.",
+          },
+          {
+            step: 3,
+            action: "Generate a new password if needed",
+            details: "In RustDesk on device, tap the refresh icon next to password to generate new one.",
+          },
+          {
+            step: 4,
+            action: "Update password in SPEAR dashboard",
+            details: "If you changed the password, update it in your SPEAR device settings.",
+          },
+        ],
+      },
+      other: {
+        diagnosis: "Let's go through general troubleshooting steps.",
+        steps: [
+          {
+            step: 1,
+            action: "Verify device is online in SPEAR dashboard",
+            details: "Check if device shows as online or offline.",
+          },
+          {
+            step: 2,
+            action: "Restart RustDesk on the device",
+            details: "Close and reopen the RustDesk app.",
+          },
+          {
+            step: 3,
+            action: "Restart the device completely",
+            details: "Power off, wait 10 seconds, power on.",
+          },
+          {
+            step: 4,
+            action: "Check internet on both ends",
+            details: "Make sure both your computer and the device have internet.",
+          },
+          {
+            step: 5,
+            action: "Try again in a few minutes",
+            details: "Temporary network issues often resolve themselves.",
+          },
+        ],
+      },
+    };
+
+    const guide = troubleshootingGuides[symptom] || troubleshootingGuides.other;
+
+    // Determine if we should escalate
+    const escalate = additionalInfo?.toLowerCase().includes("tried everything") ||
+      additionalInfo?.toLowerCase().includes("still not working") ||
+      additionalInfo?.toLowerCase().includes("multiple devices");
+
+    return {
+      success: true,
+      diagnosis: guide.diagnosis,
+      steps: guide.steps,
+      deviceStatus,
+      escalate,
+      escalateReason: escalate
+        ? "If these steps don't resolve the issue, I can create a support ticket for our team to investigate further."
+        : undefined,
+    };
+  },
+});
