@@ -30,10 +30,37 @@ payment_provider: PayPal
 
 ### 7-Day Refund Window (Auto-Approve)
 
-**Within 7 days of delivery**: Refunds are automatically approved.
-- No questions asked
-- AI agent or ops can process immediately
-- Full refund of subscription amount
+**Within 7 days of delivery**: Refunds are automatically approved for:
+- **Device costs** - Full refund, no questions asked
+- **Service fees** - Full refund of monthly subscription fee
+
+Both BYOD (Bring Your Own Device) and Furnished Device customers are eligible for the 7-day refund window. The 7-day period starts from the delivery date.
+
+### Service Fee Refund Rules
+
+**IMPORTANT**: Service fees follow the same 7-day rule as device refunds.
+- **Within 7 days of delivery**: Full refund of service fees available
+- **After 7 days**: NO refunds on service fees
+- **After 7 days cancellation**: Customer finishes out their paid month, then subscription is turned off
+- Service fees are NOT eligible for a 30-day refund - only the standard 7-day window applies
+
+### Damaged Device on Arrival
+
+If a customer receives a damaged device:
+1. Customer must contact management or open a support ticket (AI or human)
+2. Customer provides photos/evidence of the damage
+3. Each case is evaluated on a case-by-case basis
+4. **We do NOT automatically replace damaged devices for free**
+5. If determined the device was truly damaged upon shipment and receipt, we will replace it
+6. Resolution is negotiated between customer and management
+
+### Defective Device Within 30 Days
+
+If a device becomes defective within 30 days of delivery:
+1. Customer must contact us via support ticket or email
+2. Follows the same case-by-case evaluation process as damaged devices
+3. Provide details of the defect and when it occurred
+4. Resolution determined after review
 
 ### When Refunds Are Approved (After 7 Days - Requires Admin)
 
@@ -51,10 +78,12 @@ payment_provider: PayPal
 
 | Situation | Reason |
 |-----------|--------|
+| Service fees after 7 days | Outside refund window |
 | Cancellation mid-period | Access continues until period end |
 | Change of mind (after 7 days) | Outside refund window |
 | Didn't use the service | Service was available |
 | Price objection after purchase | Agreed to price at checkout |
+| Device damage customer's fault | Not a manufacturing/shipping issue |
 
 ---
 
