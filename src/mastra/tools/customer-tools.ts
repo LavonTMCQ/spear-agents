@@ -679,3 +679,180 @@ export const validateCoupon = createTool({
     }
   },
 });
+
+export const getBillingHistory = createTool({
+  id: "getBillingHistory",
+  description:
+    "Get billing history for a customer by their email address. Returns invoices, orders, payment totals, and current subscription status. Use when customers ask 'what have I paid?' or 'show my billing history'.",
+  inputSchema: z.object({
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address to look up billing history"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    user: z
+      .object({
+        id: z.string(),
+        name: z.string().nullable(),
+        email: z.string(),
+      })
+      .nullable(),
+    billing: z
+      .object({
+        totalPaid: z.number(),
+        invoiceCount: z.number(),
+        orderCount: z.number(),
+        history: z.array(
+          z.object({
+            id: z.string(),
+            type: z.enum(["invoice", "order"]),
+            amount: z.number(),
+            description: z.string(),
+            status: z.string(),
+            date: z.string().nullable(),
+          })
+        ),
+        currentSubscription: z
+          .object({
+            status: z.string(),
+            planType: z.string().nullable(),
+            currentPeriodEnd: z.string().nullable(),
+            cancelAtPeriodEnd: z.boolean(),
+          })
+          .nullable(),
+      })
+      .nullable(),
+    error: z.string().optional(),
+  }),
+  execute: async ({ email }) => {
+    try {
+      const data = await spearApi(`/agent/billing?email=${encodeURIComponent(email)}`);
+
+      if (data.success) {
+        return {
+          success: true,
+          user: data.user,
+          billing: data.billing,
+        };
+      }
+
+      return {
+        success: false,
+        user: null,
+        billing: null,
+        error: data.error || "Failed to fetch billing history",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        user: null,
+        billing: null,
+        error: String(error),
+      };
+    }
+  },
+});
+
+export const resendSetupEmail = createTool({
+  id: "resendSetupEmail",
+  description:
+    "Resend the setup/welcome email to a customer. Use when a customer says they lost their setup instructions or never received the welcome email.",
+  inputSchema: z.object({
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address to resend setup email to"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    emailsSent: z.array(z.string()).optional(),
+    message: z.string().optional(),
+    error: z.string().optional(),
+  }),
+  execute: async ({ email }) => {
+    try {
+      const data = await spearApi("/agent/resend-setup", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      });
+
+      if (data.success) {
+        return {
+          success: true,
+          emailsSent: data.emailsSent,
+          message: data.message,
+        };
+      }
+
+      return {
+        success: false,
+        error: data.error || "Failed to resend setup email",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: String(error),
+      };
+    }
+  },
+});
+
+export const requestCancellation = createTool({
+  id: "requestCancellation",
+  description:
+    "Submit a subscription cancellation request for a customer. This creates a support ticket for admin review - it does NOT immediately cancel. Use when a customer explicitly asks to cancel their subscription. Always try to understand their reason first and see if there's an alternative solution.",
+  inputSchema: z.object({
+    email: z
+      .string()
+      .email()
+      .describe("Customer's email address"),
+    reason: z
+      .string()
+      .optional()
+      .describe("Reason for cancellation (helps us improve)"),
+  }),
+  outputSchema: z.object({
+    success: z.boolean(),
+    ticketId: z.string().optional(),
+    alreadyRequested: z.boolean().optional(),
+    message: z.string().optional(),
+    subscription: z
+      .object({
+        status: z.string(),
+        currentPeriodEnd: z.string().nullable(),
+      })
+      .nullable()
+      .optional(),
+    error: z.string().optional(),
+  }),
+  execute: async ({ email, reason }) => {
+    try {
+      const data = await spearApi("/agent/cancel-request", {
+        method: "POST",
+        body: JSON.stringify({ email, reason }),
+      });
+
+      if (data.success) {
+        return {
+          success: true,
+          ticketId: data.ticketId,
+          alreadyRequested: data.alreadyRequested || false,
+          message: data.message,
+          subscription: data.subscription,
+        };
+      }
+
+      return {
+        success: false,
+        error: data.error || "Failed to submit cancellation request",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: String(error),
+      };
+    }
+  },
+});

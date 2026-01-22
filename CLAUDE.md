@@ -32,6 +32,9 @@ SPEAR Agents is the AI assistant system for the SPEAR remote device management p
    - `/api/agent/tickets` - Support ticket creation and viewing for agents
    - `/api/agent/orders` - Order and shipping status lookup for agents
    - `/api/agent/coupons/validate` - Coupon code validation for agents
+   - `/api/agent/billing` - Billing history and payment summary for agents
+   - `/api/agent/resend-setup` - Resend welcome/setup email for agents
+   - `/api/agent/cancel-request` - Submit cancellation request (creates ticket)
 
 2. **SPEAR Agents** (`spear-agents/`) - Deployed on Railway
    - Contains the Mastra agents and tools
@@ -245,6 +248,9 @@ The agents use pgvector for:
 - `getDeviceStatus` - Get device info by customer email
 - `getOrderStatus` - Get order/shipping status and tracking by email
 - `validateCoupon` - Check if a coupon code is valid (don't give out codes!)
+- `getBillingHistory` - Get billing history, invoices, and payment totals
+- `resendSetupEmail` - Resend welcome/setup email to customer
+- `requestCancellation` - Submit cancellation request (creates ticket for admin review)
 - `checkFounderSlots` - Check founder pricing availability
 - `checkRefundEligibility` - Check if order qualifies for refund
 - `createSupportTicket` - Create support ticket by customer email (appears in admin dashboard)

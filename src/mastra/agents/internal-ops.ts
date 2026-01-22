@@ -18,6 +18,9 @@ import {
   listDisputes,
   getOrderStatus,
   validateCoupon,
+  getBillingHistory,
+  resendSetupEmail,
+  requestCancellation,
 } from "../tools";
 import { sharedMemory } from "../shared/memory";
 import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
@@ -71,5 +74,8 @@ ${SPEAR_BUSINESS_RULES}
     listDisputes,
     getOrderStatus,
     validateCoupon,
+    getBillingHistory,
+    resendSetupEmail,
+    requestCancellation,
   },
 });

@@ -11,6 +11,9 @@ export {
   searchKnowledgeBase,
   getOrderStatus,
   validateCoupon,
+  getBillingHistory,
+  resendSetupEmail,
+  requestCancellation,
 } from "./customer-tools";
 
 // Admin tools (for internal ops agent only)
