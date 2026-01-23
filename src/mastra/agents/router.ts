@@ -30,7 +30,7 @@ IMPORTANT:
 - If unclear, ask a clarifying question before routing
 
 Always be helpful and route efficiently. The user should feel like they're talking to one cohesive system.`,
-  model: google("gemini-3-pro-preview"),
+  model: google("gemini-3-flash-preview"),
   agents: {
     salesAgent,
     customerSupportAgent,

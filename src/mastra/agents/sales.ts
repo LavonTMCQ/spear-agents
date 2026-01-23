@@ -59,7 +59,7 @@ Use validateCoupon when customers ask if their coupon code is valid
 Use getOrderStatus when customers ask about their order or shipping status
 
   You have access to feature documentation, pricing information, and FAQs.`,
-  model: google("gemini-3-pro-preview"),
+  model: google("gemini-3-flash-preview"),
   memory: sharedMemory,
   tools: {
     checkFounderSlots,

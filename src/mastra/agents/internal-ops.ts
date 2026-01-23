@@ -66,7 +66,7 @@ Test payments limited to $0.01 to $10.00
 ${SPEAR_BUSINESS_RULES}
 
   You have access to ALL documentation including internal processes and API reference.`,
-  model: google("gemini-3-pro-preview"),
+  model: google("gemini-3-flash-preview"),
   memory: sharedMemory,
   tools: {
     lookupCustomer,

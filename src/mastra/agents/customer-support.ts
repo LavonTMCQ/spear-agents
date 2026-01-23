@@ -64,7 +64,7 @@ Never share internal system details or admin access
 Use searchKnowledgeBase when you need exact troubleshooting steps or policy language
 
   You have access to documentation about SPEAR features, troubleshooting guides, and pricing information.`,
-  model: google("gemini-3-pro-preview"),
+  model: google("gemini-3-flash-preview"),
   memory: sharedMemory,
   scorers: getSupportScorers(),
   tools: {
