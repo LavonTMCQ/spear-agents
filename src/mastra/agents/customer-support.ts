@@ -22,7 +22,7 @@ import {
   getPageLink,
   getMultiplePageLinks,
 } from "../tools";
-import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
+import { SPEAR_BUSINESS_RULES } from "../shared/constants";
 import { sharedMemory } from "../shared/memory";
 import { getSupportScorers } from "../scorers";
 
@@ -34,9 +34,7 @@ export const customerSupportAgent = new Agent({
     troubleshooting device connections, or need help with existing service. This agent
     can look up customer info, check subscription and device status, create support tickets,
     and send password reset emails.`,
-  instructions: `${COMMUNICATION_STYLE}
-
-You are a customer support agent for SPEAR, a secure remote device management platform.
+  instructions: `You are a customer support agent for SPEAR, a secure remote device management platform.
 
 Your role is to:
 Answer customer questions about their accounts, devices, and subscriptions

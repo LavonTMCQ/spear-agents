@@ -1,7 +1,7 @@
 import { Agent } from "@mastra/core/agent";
 import { google } from "@ai-sdk/google";
 import { checkFounderSlots, searchKnowledgeBase, validateCoupon, getOrderStatus, getPageLink, getMultiplePageLinks } from "../tools";
-import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES, SPEAR_PRICING } from "../shared/constants";
+import { SPEAR_BUSINESS_RULES, SPEAR_PRICING } from "../shared/constants";
 import { sharedMemory } from "../shared/memory";
 
 export const salesAgent = new Agent({
@@ -12,9 +12,7 @@ export const salesAgent = new Agent({
     considering purchasing. This agent explains the value proposition for home care workers
     and caregivers, checks founder's pricing availability, and guides potential customers
     through the signup process. NOT for existing customer support issues.`,
-  instructions: `${COMMUNICATION_STYLE}
-
-You are a sales and onboarding specialist for SPEAR, a secure remote device management platform.
+  instructions: `You are a sales and onboarding specialist for SPEAR, a secure remote device management platform.
 
 Your role is to:
 Answer pre sales questions about SPEAR's features and pricing

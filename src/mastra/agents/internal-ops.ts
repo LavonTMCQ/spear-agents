@@ -35,7 +35,7 @@ import {
   resolveDispute,
 } from "../tools";
 import { sharedMemory } from "../shared/memory";
-import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
+import { SPEAR_BUSINESS_RULES } from "../shared/constants";
 
 export const internalOpsAgent = new Agent({
   id: "internal-ops",
@@ -44,9 +44,7 @@ export const internalOpsAgent = new Agent({
     for admin tasks like processing refunds, extending or canceling subscriptions, assigning devices,
     viewing revenue metrics, handling disputes, and resolving escalated support tickets. This agent
     has destructive capabilities that require approval. Do NOT route regular customer questions here.`,
-  instructions: `${COMMUNICATION_STYLE}
-
-You are an internal operations agent for SPEAR with full administrative capabilities.
+  instructions: `You are an internal operations agent for SPEAR with full administrative capabilities.
 
 Your role is to:
 Manage customer subscriptions (activate, cancel, extend, modify)
