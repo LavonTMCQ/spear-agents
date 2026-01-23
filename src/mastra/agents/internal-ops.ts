@@ -9,6 +9,7 @@ import {
   createSupportTicket,
   getSupportTickets,
   sendPasswordReset,
+  searchKnowledgeBase,
   getOrderDetails,
   processRefund,
   extendSubscription,
@@ -25,48 +26,38 @@ import {
   getQuickDeviceInfo,
   getOnboardingProgress,
   troubleshootConnection,
-  // Device inventory management
+  getPageLink,
+  getMultiplePageLinks,
   getDeviceInventory,
   addDeviceToInventory,
   updateDeviceStatus,
-  // Dispute management
   getDisputeDetails,
   flagDispute,
   resolveDispute,
 } from "../tools";
 import { sharedMemory } from "../shared/memory";
-import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
+import { SPEAR_BUSINESS_RULES } from "../shared/constants";
 
 export const internalOpsAgent = new Agent({
   id: "internal-ops",
   name: "SPEAR Ops",
-  description: `Internal operations agent with full administrative capabilities. Use this agent ONLY
-    for admin tasks like processing refunds, extending or canceling subscriptions, assigning devices,
-    viewing revenue metrics, handling disputes, and resolving escalated support tickets. This agent
-    has destructive capabilities that require approval. Do NOT route regular customer questions here.`,
-  instructions: `${COMMUNICATION_STYLE}
-
-You are an internal operations agent for SPEAR with full administrative capabilities.
-
-Your role is to:
-Manage customer subscriptions (activate, cancel, extend, modify)
-Process refunds and handle payment issues
-Manage device inventory and assignments
-Handle disputes and chargebacks
-Monitor system health and revenue
-Resolve escalated support tickets
-
-Key information:
-You have FULL administrative access
-All actions are logged for audit
-Be careful with destructive operations
-Always confirm before processing refunds or cancellations
-Test payments limited to $0.01 to $10.00
+  description: "Admin operations: refunds, subscriptions, inventory, disputes, revenue, full access",
+  instructions: `You are SPEAR internal ops with full admin access. Be precise and careful.
 
 ${SPEAR_BUSINESS_RULES}
 
-  You have access to ALL documentation including internal processes and API reference.`,
-  model: google("gemini-3-pro-preview"),
+CAPABILITIES:
+- Subscriptions: extend, cancel, modify
+- Refunds: process within 7 days auto, escalate after
+- Inventory: view, add, update device status
+- Disputes: flag, investigate, resolve
+- Revenue: view metrics and reports
+- Customer lookup, tickets, troubleshooting
+- All customer support functions
+
+All destructive actions are logged. Confirm before refunds/cancellations.
+Test payments: $0.01-$10.00 only.`,
+  model: google("gemini-3.0-flash"),
   memory: sharedMemory,
   tools: {
     lookupCustomer,
@@ -77,6 +68,7 @@ ${SPEAR_BUSINESS_RULES}
     createSupportTicket,
     getSupportTickets,
     sendPasswordReset,
+    searchKnowledgeBase,
     getOrderDetails,
     processRefund,
     extendSubscription,
@@ -93,11 +85,11 @@ ${SPEAR_BUSINESS_RULES}
     getQuickDeviceInfo,
     getOnboardingProgress,
     troubleshootConnection,
-    // Device inventory management
+    getPageLink,
+    getMultiplePageLinks,
     getDeviceInventory,
     addDeviceToInventory,
     updateDeviceStatus,
-    // Dispute management
     getDisputeDetails,
     flagDispute,
     resolveDispute,

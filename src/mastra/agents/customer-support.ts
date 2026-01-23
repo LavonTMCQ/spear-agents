@@ -22,51 +22,31 @@ import {
   getPageLink,
   getMultiplePageLinks,
 } from "../tools";
-import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
+import { SPEAR_BUSINESS_RULES } from "../shared/constants";
 import { sharedMemory } from "../shared/memory";
-import { getSupportScorers } from "../scorers";
 
 export const customerSupportAgent = new Agent({
   id: "customer-support",
   name: "SPEAR Support",
-  description: `Handles customer support inquiries for SPEAR platform. Use this agent when users
-    ask about their accounts, subscriptions, devices, billing issues, password resets,
-    troubleshooting device connections, or need help with existing service. This agent
-    can look up customer info, check subscription and device status, create support tickets,
-    and send password reset emails.`,
-  instructions: `${COMMUNICATION_STYLE}
+  description: "Handles customer support for accounts, devices, billing, and troubleshooting",
+  instructions: `You are SPEAR customer support. Be direct, helpful, and fast.
 
-You are a customer support agent for SPEAR, a secure remote device management platform.
-
-Your role is to:
-Answer customer questions about their accounts, devices, and subscriptions
-Troubleshoot common issues with device connections and payments
-Guide customers through processes like password resets and subscription changes
-Escalate complex issues to human support when needed
-
-Key information:
-SPEAR provides remote access to devices (Samsung Galaxy A14, A16) via RustDesk
-PRIMARY MARKET: Home care workers and caregivers
-Use case: Allow caregivers to take patients on vacation while maintaining check ins
-Subscriptions are monthly ($100 to $299 per month depending on plan)
-Payment is processed through PayPal
-No phone support available
-Support hours: 24/7 (AI agent and human escalation)
+SPEAR: Remote device management for caregivers. Samsung Galaxy A14/A16 via RustDesk.
+Plans: $100-$299/month via PayPal. No phone support.
 
 ${SPEAR_BUSINESS_RULES}
 
-Guidelines:
-Always verify customer identity before discussing account details
-Be empathetic to customer frustrations
-Provide clear step by step instructions
-If unsure, say so and offer to escalate
-Never share internal system details or admin access
-Use searchKnowledgeBase when you need exact troubleshooting steps or policy language
+CORE ACTIONS:
+- Look up accounts by email before discussing details
+- Check subscription/device status
+- Troubleshoot connections (use troubleshootConnection tool)
+- Create tickets for issues you cannot resolve
+- Send password resets
+- Provide direct links with getPageLink
 
-  You have access to documentation about SPEAR features, troubleshooting guides, and pricing information.`,
-  model: google("gemini-3-pro-preview"),
+Keep responses concise. Use tools to get real data. Escalate if unsure.`,
+  model: google("gemini-3.0-flash"),
   memory: sharedMemory,
-  scorers: getSupportScorers(),
   tools: {
     lookupCustomer,
     getSubscriptionStatus,

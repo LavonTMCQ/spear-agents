@@ -27,7 +27,7 @@ const workingMemoryTemplate = `# Customer Profile
 export const sharedMemory = new Memory({
   ...(vector ? { vector, embedder } : {}),
   options: {
-    lastMessages: 20,
+    lastMessages: 4,
     workingMemory: {
       enabled: true,
       scope: "resource",
@@ -35,8 +35,8 @@ export const sharedMemory = new Memory({
     },
     semanticRecall: vector
       ? {
-          topK: 5,
-          messageRange: 2,
+          topK: 3,
+          messageRange: 1,
           scope: "resource",
         }
       : false,
