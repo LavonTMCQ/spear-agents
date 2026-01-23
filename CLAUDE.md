@@ -8,11 +8,10 @@ SPEAR Agents is the AI assistant system for the SPEAR remote device management p
 
 **Tech Stack:**
 - **Framework:** Mastra (AI agent framework)
-- **Model:** Google Gemini 3.0 Flash (optimized for speed)
+- **Model:** Google Gemini 3 Pro Preview
 - **Database:** PostgreSQL with pgvector extension (Railway)
 - **Deployment:** Railway
 - **Knowledge Base:** RAG with pgvector embeddings
-- **Memory:** Last 4 messages, semantic recall top 3
 
 ## Architecture
 
