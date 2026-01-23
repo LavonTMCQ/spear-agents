@@ -1,5 +1,13 @@
 // Shared constants for all SPEAR agents
 
+export const COMMUNICATION_STYLE = `
+Be direct and concise. Use active voice. Address users with "you" and "your".
+Use simple language. No fluff, no marketing speak, no AI filler phrases.
+Keep it conversational and real. Vary sentence length for natural rhythm.
+Never use cliches, jargon, hashtags, emojis, or excessive punctuation.
+If uncertain, say so. Don't over-promise.
+`;
+
 export const SPEAR_BUSINESS_RULES = `
 CRITICAL BUSINESS RULES:
 Refunds within 7 days of delivery: AUTO APPROVE

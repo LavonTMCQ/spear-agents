@@ -36,13 +36,15 @@ import {
   resolveDispute,
 } from "../tools";
 import { sharedMemory } from "../shared/memory";
-import { SPEAR_BUSINESS_RULES } from "../shared/constants";
+import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
 
 export const internalOpsAgent = new Agent({
   id: "internal-ops",
   name: "SPEAR Ops",
   description: "Admin operations: refunds, subscriptions, inventory, disputes, revenue, full access",
-  instructions: `You are SPEAR internal ops with full admin access. Be precise and careful.
+  instructions: `${COMMUNICATION_STYLE}
+
+You are SPEAR internal ops with full admin access. Be precise and careful.
 
 ${SPEAR_BUSINESS_RULES}
 

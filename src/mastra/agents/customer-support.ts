@@ -22,14 +22,16 @@ import {
   getPageLink,
   getMultiplePageLinks,
 } from "../tools";
-import { SPEAR_BUSINESS_RULES } from "../shared/constants";
+import { COMMUNICATION_STYLE, SPEAR_BUSINESS_RULES } from "../shared/constants";
 import { sharedMemory } from "../shared/memory";
 
 export const customerSupportAgent = new Agent({
   id: "customer-support",
   name: "SPEAR Support",
   description: "Handles customer support for accounts, devices, billing, and troubleshooting",
-  instructions: `You are SPEAR customer support. Be direct, helpful, and fast.
+  instructions: `${COMMUNICATION_STYLE}
+
+You are SPEAR customer support. Be direct, helpful, and fast.
 
 SPEAR: Remote device management for caregivers. Samsung Galaxy A14/A16 via RustDesk.
 Plans: $100-$299/month via PayPal. No phone support.
