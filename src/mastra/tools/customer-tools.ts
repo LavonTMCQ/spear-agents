@@ -1360,6 +1360,11 @@ const PAGE_LINKS: Record<
     title: "BYOD Setup Guide",
     description: "Step-by-step guide to set up your own device with SPEAR",
   },
+  device_setup: {
+    url: `${SPEAR_BASE_URL}/onboarding/device-setup`,
+    title: "Device Setup with QR Code",
+    description: "RustDesk configuration page with QR code for easy setup - scan to configure your device",
+  },
   subscription: {
     url: `${SPEAR_BASE_URL}/subscription`,
     title: "Subscription Management",
@@ -1425,13 +1430,14 @@ const PAGE_LINKS: Record<
 export const getPageLink = createTool({
   id: "getPageLink",
   description:
-    "Get a direct link to a SPEAR page. Use this to provide customers with clickable links instead of just describing where to go. Available pages: dashboard, pricing, byod_setup, subscription, terms, refund_policy, privacy, forgot_password, login, signup, contact, faq, how_it_works, download, home",
+    "Get a direct link to a SPEAR page. Use this to provide customers with clickable links instead of just describing where to go. Available pages: dashboard, pricing, byod_setup, device_setup, subscription, terms, refund_policy, privacy, forgot_password, login, signup, contact, faq, how_it_works, download, home. IMPORTANT: Use device_setup when customers need RustDesk QR code or server configuration.",
   inputSchema: z.object({
     page: z
       .enum([
         "dashboard",
         "pricing",
         "byod_setup",
+        "device_setup",
         "subscription",
         "terms",
         "refund_policy",
@@ -1492,6 +1498,7 @@ export const getMultiplePageLinks = createTool({
           "dashboard",
           "pricing",
           "byod_setup",
+          "device_setup",
           "subscription",
           "terms",
           "refund_policy",

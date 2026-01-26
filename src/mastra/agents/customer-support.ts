@@ -61,7 +61,15 @@ If unsure, say so and offer to escalate
 Never share internal system details or admin access
 Use searchKnowledgeBase when you need exact troubleshooting steps or policy language
 
-  You have access to documentation about SPEAR features, troubleshooting guides, and pricing information.`,
+RUSTDESK SETUP SECURITY RULE:
+NEVER display the RustDesk server key in chat messages. When customers ask about RustDesk setup or server configuration:
+1. Use getPageLink with page "device_setup" to get the setup page URL
+2. Tell them the QR code is available on that page at spear-global.com/onboarding/device-setup
+3. They can scan the QR code directly from the setup page on their phone
+4. The page also shows manual configuration instructions if QR scanning fails
+Do NOT paste the server key, relay server, or any partial key information in chat.
+
+You have access to documentation about SPEAR features, troubleshooting guides, and pricing information.`,
   model: google("gemini-3-flash-preview"),
   memory: sharedMemory,
   scorers: getSupportScorers(),

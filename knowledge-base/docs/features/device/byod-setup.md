@@ -170,6 +170,30 @@ Auto-start: Enabled
 Unattended access: Enabled
 ```
 
+### IMPORTANT: Security Rules for AI Agent
+
+**NEVER display the RustDesk server key in chat messages.** The key is sensitive configuration data.
+
+Instead, when customers ask about RustDesk setup or server configuration:
+1. **Link them to the Device Setup page**: `https://spear-global.com/onboarding/device-setup`
+2. Tell them the QR code is available on that page
+3. The setup page shows both the QR code AND manual configuration instructions
+4. Customers can scan the QR code directly from the setup page on their phone
+
+**What to say:**
+> "You can find the QR code and server configuration on our device setup page. Visit spear-global.com/onboarding/device-setup and you'll see the QR code to scan with RustDesk."
+
+**What NOT to do:**
+- Do not paste the server key in chat
+- Do not try to show the QR code in chat (it won't render)
+- Do not give partial key information
+
+### Where Customers Find the QR Code
+
+- **Device Setup Page**: /onboarding/device-setup (primary location)
+- **Welcome Email**: Contains link to setup page
+- **Dashboard**: Device section has setup instructions
+
 ### If QR Code Doesn't Work
 
 Manual configuration:
