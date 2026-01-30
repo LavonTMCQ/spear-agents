@@ -370,4 +370,61 @@ SELECT count(*) FROM pg_stat_activity;
 
 ---
 
+## Affiliate Models
+
+### AffiliateProfile Table
+
+**Purpose**: Store affiliate profiles with type, tier, and balance tracking
+
+**Key Fields**:
+- `affiliateType`: "general" (self-signup) or "private" (admin-assigned). Default: "general"
+- `tier`: "standard", "ambassador", or "captain". Default: "standard". Auto-upgrades based on totalActivations
+- `totalActivations`: Count of referred users who completed first payment (general affiliates)
+- `referralCode`: Unique code format `SPEAR-XXXXXX`
+- `commissionRate`: Rate in cents (default 2500 = $25)
+- `totalEarned`, `totalPaid`, `pendingBalance`: Financial tracking in cents
+
+### AffiliateCommission Table
+
+**Purpose**: Individual commission records with type tracking
+
+**Key Fields**:
+- `commissionType`: "recurring" (private renewals), "one_time" (general activations), or "milestone_bonus"
+- `amount`: Commission amount in cents
+- `status`: "pending" -> "approved" -> "paid" (or "reversed")
+
+### AffiliateMilestone Table
+
+**Purpose**: Track milestone bonus achievements per affiliate
+
+```sql
+CREATE TABLE "AffiliateMilestone" (
+  id TEXT PRIMARY KEY,
+  affiliateId TEXT NOT NULL,
+  milestone INT NOT NULL,         -- Activation threshold: 3, 5, 10, 25
+  bonusAmount INT NOT NULL,       -- Bonus in cents: 2500, 7500, 25000, 100000
+  status TEXT DEFAULT 'pending',  -- "pending", "approved", "paid"
+  awardedAt TIMESTAMP DEFAULT NOW(),
+  approvedAt TIMESTAMP,
+  paidAt TIMESTAMP,
+  payoutId TEXT,
+  CONSTRAINT unique_affiliate_milestone UNIQUE (affiliateId, milestone)
+);
+```
+
+**Key Constraints**:
+- `@@unique([affiliateId, milestone])`: Prevents double-awarding of milestone bonuses
+- Linked to AffiliateProfile (cascade delete) and AffiliatePayout
+
+### Referral Table
+
+**Purpose**: Links affiliate to referred user
+
+**Key Fields**:
+- `referredUserId`: Unique - one referrer per user (first code wins)
+- `status`: "signed_up" -> "subscribed" -> "active" -> "churned"
+- `firstPaymentDate`: Set on first renewal (private) or first payment (general)
+
+---
+
 **CRITICAL REMINDER**: Always backup the database before schema changes. Test migrations in development first.

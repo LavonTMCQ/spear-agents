@@ -7,14 +7,14 @@ audience: [developer, internal-ops, ai-agent]
 status: current
 related: [affiliate-program, affiliate-commission-process]
 last_updated: 2026-01-30
-version: 1.0
-tags: [affiliate, api, referral, commission, payout]
+version: 2.0
+tags: [affiliate, api, referral, commission, payout, milestones, tiers]
 ---
 
 # Affiliate API Endpoints
 
 ## Summary
-API endpoints for the SPEAR affiliate marketing system, covering client-facing profile/stats/payouts and admin management.
+API endpoints for the SPEAR affiliate marketing system, covering client-facing profile/stats/payouts/milestones and admin management. Supports dual affiliate types (general + private).
 
 ## Quick Reference
 ```yaml
@@ -39,9 +39,12 @@ Returns the authenticated user's affiliate profile, or null if not activated.
     "referralCode": "SPEAR-ABC123",
     "commissionRate": 2500,
     "status": "active",
-    "totalEarned": 7500,
+    "affiliateType": "general",
+    "tier": "ambassador",
+    "totalActivations": 4,
+    "totalEarned": 12500,
     "totalPaid": 5000,
-    "pendingBalance": 2500,
+    "pendingBalance": 7500,
     "payoutEmail": "user@example.com",
     "createdAt": "2026-01-15"
   }
@@ -49,7 +52,7 @@ Returns the authenticated user's affiliate profile, or null if not activated.
 ```
 
 ### POST /api/affiliate/profile
-Creates an affiliate profile for the authenticated user. Generates a unique referral code.
+Creates an affiliate profile for the authenticated user. Generates a unique referral code. New profiles default to `affiliateType: "general"` and `tier: "standard"`.
 
 **Response (201)**:
 ```json
@@ -57,7 +60,9 @@ Creates an affiliate profile for the authenticated user. Generates a unique refe
   "profile": {
     "referralCode": "SPEAR-XYZ789",
     "status": "active",
-    "commissionRate": 2500
+    "commissionRate": 2500,
+    "affiliateType": "general",
+    "tier": "standard"
   }
 }
 ```
@@ -65,16 +70,71 @@ Creates an affiliate profile for the authenticated user. Generates a unique refe
 ---
 
 ### GET /api/affiliate/stats
-Returns affiliate performance statistics.
+Returns affiliate performance statistics with tier and milestone data.
 
 **Response (200)**:
 ```json
 {
   "totalReferrals": 5,
   "activeSubscribers": 3,
-  "totalEarned": 7500,
-  "pendingBalance": 2500,
-  "commissionRate": 2500
+  "totalEarned": 12500,
+  "pendingBalance": 7500,
+  "commissionRate": 2500,
+  "affiliateType": "general",
+  "tier": "ambassador",
+  "tierDisplayName": "Caregiver Ambassador",
+  "totalActivations": 4,
+  "nextMilestone": {
+    "threshold": 5,
+    "bonus": 7500
+  },
+  "milestoneProgress": [
+    { "threshold": 3, "bonus": 2500, "status": "achieved" },
+    { "threshold": 5, "bonus": 7500, "status": "next" },
+    { "threshold": 10, "bonus": 25000, "status": "locked" },
+    { "threshold": 25, "bonus": 100000, "status": "locked" }
+  ]
+}
+```
+
+**Notes**:
+- `affiliateType`: "general" or "private"
+- `tier`: "standard", "ambassador", or "captain" (general only)
+- `nextMilestone`: null if all milestones achieved
+- `milestoneProgress`: status is "achieved", "next", or "locked"
+
+---
+
+### GET /api/affiliate/milestones
+Returns detailed milestone progress with database status for each threshold.
+
+**Response (200)**:
+```json
+{
+  "totalActivations": 4,
+  "tier": "ambassador",
+  "tierDisplayName": "Caregiver Ambassador",
+  "affiliateType": "general",
+  "milestones": [
+    {
+      "threshold": 3,
+      "bonus": 2500,
+      "displayStatus": "achieved",
+      "dbStatus": "approved",
+      "awardedAt": "2026-01-20T...",
+      "approvedAt": "2026-02-04T...",
+      "paidAt": null
+    },
+    {
+      "threshold": 5,
+      "bonus": 7500,
+      "displayStatus": "next",
+      "dbStatus": null,
+      "awardedAt": null,
+      "approvedAt": null,
+      "paidAt": null
+    }
+  ]
 }
 ```
 
@@ -101,7 +161,7 @@ Returns list of referrals with privacy-safe display names.
 ---
 
 ### GET /api/affiliate/earnings
-Returns monthly earnings breakdown.
+Returns monthly earnings breakdown with commission types.
 
 **Response (200)**:
 ```json
@@ -110,18 +170,31 @@ Returns monthly earnings breakdown.
     {
       "month": "2026-01",
       "activeReferrals": 3,
-      "totalEarned": 7500,
+      "totalEarned": 10000,
+      "commissionTypes": ["one_time", "milestone_bonus"],
       "commissions": [
         {
           "amount": 2500,
           "status": "approved",
-          "referralName": "John S."
+          "referralName": "John S.",
+          "commissionType": "one_time"
+        },
+        {
+          "amount": 7500,
+          "status": "pending",
+          "referralName": null,
+          "commissionType": "milestone_bonus"
         }
       ]
     }
   ]
 }
 ```
+
+**Commission Types**:
+- `one_time`: General affiliate activation bonus ($25)
+- `recurring`: Private affiliate monthly commission ($25)
+- `milestone_bonus`: Bonus for reaching activation threshold
 
 ---
 
@@ -196,7 +269,7 @@ Update PayPal payout email.
 ## Admin Endpoints
 
 ### GET /api/admin/affiliates
-List all affiliates (admin only).
+List all affiliates with type, tier, and activation data (admin only).
 
 **Response (200)**:
 ```json
@@ -208,10 +281,13 @@ List all affiliates (admin only).
       "userEmail": "john@example.com",
       "referralCode": "SPEAR-ABC123",
       "status": "active",
+      "affiliateType": "general",
+      "tier": "ambassador",
+      "totalActivations": 4,
       "totalReferrals": 5,
       "activeReferrals": 3,
-      "totalEarned": 7500,
-      "pendingBalance": 2500
+      "totalEarned": 12500,
+      "pendingBalance": 7500
     }
   ]
 }
@@ -221,15 +297,23 @@ List all affiliates (admin only).
 Get detailed affiliate info with referrals, commissions, and payouts.
 
 ### PUT /api/admin/affiliates/[id]
-Update affiliate status or commission rate.
+Update affiliate status, commission rate, type, or tier.
 
 **Request Body**:
 ```json
 {
   "status": "suspended",
-  "commissionRate": 3000
+  "commissionRate": 3000,
+  "affiliateType": "private",
+  "tier": "captain"
 }
 ```
+
+**Accepted Fields**:
+- `status`: "active", "suspended", "banned"
+- `commissionRate`: Integer (cents)
+- `affiliateType`: "general" or "private"
+- `tier`: "standard", "ambassador", or "captain"
 
 ---
 
@@ -251,40 +335,70 @@ Process a payout.
 **Side Effects on "completed"**:
 - Decrements affiliate's `pendingBalance`
 - Increments affiliate's `totalPaid`
-- Marks associated approved commissions as "paid"
+- Marks associated approved commissions (including milestone bonuses) as "paid"
 
 ---
 
 ### GET /api/admin/affiliates/settings
-Get program settings (default commission rate, min payout, enabled flag).
+Get program settings for both affiliate types.
+
+**Response (200)**:
+```json
+{
+  "settings": {
+    "commissionRate": 2500,
+    "minPayoutThreshold": 5000,
+    "programEnabled": true,
+    "generalCommissionRate": 2500,
+    "generalHoldDays": 15,
+    "generalSignupEnabled": true
+  }
+}
+```
 
 ### PUT /api/admin/affiliates/settings
 Update program settings.
 
-**Request Body**:
+**Request Body** (all fields optional):
 ```json
 {
-  "defaultCommissionRate": 2500,
+  "commissionRate": 2500,
   "minPayoutThreshold": 5000,
-  "affiliateProgramEnabled": true
+  "programEnabled": true,
+  "generalCommissionRate": 2500,
+  "generalHoldDays": 15,
+  "generalSignupEnabled": true
 }
 ```
+
+**Settings**:
+- `commissionRate`: Private affiliate commission rate (cents)
+- `minPayoutThreshold`: Minimum payout amount (cents)
+- `programEnabled`: Enable/disable entire program
+- `generalCommissionRate`: General affiliate commission rate (cents)
+- `generalHoldDays`: Hold period for general commissions (1-90 days, default 15)
+- `generalSignupEnabled`: Allow self-signup for general affiliates
 
 ---
 
 ## Cron Endpoint
 
 ### GET /api/cron/process-commissions
-Daily cron job (2am) that approves pending commissions older than 7 days.
+Daily cron job (2am) that approves pending commissions using dynamic hold periods per affiliate type.
 
 **Authentication**: Bearer token (`CRON_SECRET` environment variable)
+
+**Hold Periods**:
+- General affiliates: 15 days
+- Private affiliates: 7 days
 
 **Response (200)**:
 ```json
 {
   "success": true,
   "approved": 5,
-  "message": "Approved 5 commissions"
+  "milestonesApproved": 1,
+  "message": "Approved 5 commissions and 1 milestones"
 }
 ```
 

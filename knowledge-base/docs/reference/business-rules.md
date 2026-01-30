@@ -217,35 +217,51 @@ Once a device is received **in working condition**, the customer is responsible 
 
 ## Affiliate Program Rules
 
-### Commission Structure
-- **Rate**: $25/month flat per active referred subscriber
-- **Trigger**: Only on renewals (NOT initial payment)
-- **First Commission**: After referred user's first renewal (30+ days after signup)
-- **Hold Period**: 7-day hold on new commissions before approval
-- **Discount Independence**: $25 regardless of what the referred user pays
+### Two Affiliate Types
 
-### Referral Rules
+SPEAR has two affiliate types that coexist:
+
+**General Affiliates** (self-signup, default for all new affiliates):
+- **Commission**: $25 one-time per activation
+- **Trigger**: First payment capture (when referred user pays)
+- **Hold Period**: 15 days before approval
+- **Tiers**: Standard (0-2) -> Caregiver Ambassador (3+) -> Captain (10+)
+- **Milestone Bonuses**: +$25 at 3, +$75 at 5, +$250 at 10, +$1,000 at 25 activations
+
+**Private Affiliates** (admin-assigned partners only):
+- **Commission**: $25/month recurring per active subscriber
+- **Trigger**: Each renewal webhook (NOT initial payment)
+- **First Commission**: After referred user's first renewal (30+ days)
+- **Hold Period**: 7 days before approval
+- **No tiers or milestones**
+
+### Shared Rules
 - **Self-Referral**: BLOCKED - Users cannot use their own referral code
 - **Duplicate Referral**: One referrer per user (first code wins)
 - **Referral Code Format**: `SPEAR-XXXXXX` (6 random alphanumeric characters)
-- **Attribution**: URL parameter `?ref=SPEAR-XXXXXX` saved to browser localStorage
+- **Attribution**: URL parameter `?ref=SPEAR-XXXXXX` saved to browser localStorage, or manual entry at checkout
+- **Discount Independence**: $25 regardless of what the referred user pays
 
 ### Payout Rules
 - **Minimum Payout**: $50
 - **Payout Method**: PayPal only
 - **Processing**: Admin sends manually via PayPal, enters transaction ID
 - **One at a Time**: Cannot request new payout while one is pending/processing
+- **Includes**: Regular commissions + milestone bonuses
 
 ### Agent Instructions for Affiliate Questions
 
 **Customer asks about affiliate program**:
-> "You can earn $25/month for each person you refer who stays subscribed. Activate your affiliate account at /dashboard/affiliate to get your unique referral code. Commissions start after your referral's first renewal (about 30 days). Payouts are via PayPal with a $50 minimum."
+> "You can earn $25 for each person you refer who signs up and pays. Activate your affiliate account at /dashboard/affiliate to get your unique referral code. Plus, there are milestone bonuses when you hit 3, 5, 10, and 25 referrals, and you'll level up through our tier system. Payouts are via PayPal with a $50 minimum."
+
+**Customer asks about tiers and milestones**:
+> "Our affiliate program has three tiers. Everyone starts at Standard. At 3 activations you become a Caregiver Ambassador and get a $25 bonus. At 5 you get a $75 bonus. At 10 you reach Captain tier with a $250 bonus. At 25 activations there's a $1,000 bonus. Tiers upgrade automatically."
 
 **Customer asks when they'll get paid**:
-> "Commissions are earned on each renewal of your referred users, starting from their first renewal. There's a 7-day hold on new commissions. Once your balance reaches $50, you can request a payout from the Payouts tab."
+> "You earn $25 each time someone you referred signs up and makes their first payment. There's a 15-day hold on new commissions for security. Once your balance reaches $50, you can request a payout from the Payouts tab."
 
 **Customer says their referral wasn't tracked**:
-> "The person you referred needs to use your referral link (with ?ref=YOUR-CODE) when they first visit the site. If they signed up without using the link, unfortunately we can't retroactively attribute the referral. Please make sure to share your full referral link next time."
+> "The person you referred needs to use your referral link (with ?ref=YOUR-CODE) when they visit the site, or they can enter your code manually on the checkout page. If they signed up without using the link or code, unfortunately we can't retroactively attribute the referral. Please make sure to share your full referral link next time."
 
 ---
 
@@ -331,9 +347,11 @@ Is it within 30 days?
 5. **Home care workers** are our primary audience
 6. **$100 device replacement** fee after delivery
 7. **International shipping** is 14 days
-8. **Affiliate commissions** only on renewals, not initial payment
+8. **General affiliates** earn $25 one-time per activation (15-day hold), **private affiliates** earn $25/month recurring on renewals (7-day hold)
 9. **$50 minimum** for affiliate payouts
 10. **Self-referral blocked** - cannot use own referral code
+11. **Milestone bonuses** at 3/5/10/25 activations (general affiliates only)
+12. **Tier progression** is automatic: Standard -> Ambassador (3+) -> Captain (10+)
 
 ---
 

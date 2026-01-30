@@ -183,6 +183,7 @@ To find customer information:
 | [/api/affiliate/referrals](./api/affiliate/endpoints.md) | GET | Referral list |
 | [/api/affiliate/earnings](./api/affiliate/endpoints.md) | GET | Monthly earnings breakdown |
 | [/api/affiliate/payouts](./api/affiliate/endpoints.md) | GET/POST | Payout history + request |
+| [/api/affiliate/milestones](./api/affiliate/endpoints.md) | GET | Milestone progress (general affiliates) |
 | [/api/affiliate/payout-method](./api/affiliate/endpoints.md) | PUT | Update payout email |
 | [/api/admin/affiliates/*](./api/affiliate/endpoints.md) | Various | Admin affiliate management |
 
