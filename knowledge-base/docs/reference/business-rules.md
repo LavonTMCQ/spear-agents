@@ -5,8 +5,8 @@ type: reference
 category: system
 audience: [customer-support, internal-ops, sales, admin, ai-agent]
 status: current
-last_updated: 2025-01-20
-version: 1.0
+last_updated: 2026-01-30
+version: 1.1
 tags: [business, rules, policies, refunds, shipping, support]
 priority: high
 ---
@@ -215,6 +215,40 @@ Once a device is received **in working condition**, the customer is responsible 
 
 ---
 
+## Affiliate Program Rules
+
+### Commission Structure
+- **Rate**: $25/month flat per active referred subscriber
+- **Trigger**: Only on renewals (NOT initial payment)
+- **First Commission**: After referred user's first renewal (30+ days after signup)
+- **Hold Period**: 7-day hold on new commissions before approval
+- **Discount Independence**: $25 regardless of what the referred user pays
+
+### Referral Rules
+- **Self-Referral**: BLOCKED - Users cannot use their own referral code
+- **Duplicate Referral**: One referrer per user (first code wins)
+- **Referral Code Format**: `SPEAR-XXXXXX` (6 random alphanumeric characters)
+- **Attribution**: URL parameter `?ref=SPEAR-XXXXXX` saved to browser localStorage
+
+### Payout Rules
+- **Minimum Payout**: $50
+- **Payout Method**: PayPal only
+- **Processing**: Admin sends manually via PayPal, enters transaction ID
+- **One at a Time**: Cannot request new payout while one is pending/processing
+
+### Agent Instructions for Affiliate Questions
+
+**Customer asks about affiliate program**:
+> "You can earn $25/month for each person you refer who stays subscribed. Activate your affiliate account at /dashboard/affiliate to get your unique referral code. Commissions start after your referral's first renewal (about 30 days). Payouts are via PayPal with a $50 minimum."
+
+**Customer asks when they'll get paid**:
+> "Commissions are earned on each renewal of your referred users, starting from their first renewal. There's a 7-day hold on new commissions. Once your balance reaches $50, you can request a payout from the Payouts tab."
+
+**Customer says their referral wasn't tracked**:
+> "The person you referred needs to use your referral link (with ?ref=YOUR-CODE) when they first visit the site. If they signed up without using the link, unfortunately we can't retroactively attribute the referral. Please make sure to share your full referral link next time."
+
+---
+
 ## Sales Rules
 
 ### Pricing Promises
@@ -297,6 +331,9 @@ Is it within 30 days?
 5. **Home care workers** are our primary audience
 6. **$100 device replacement** fee after delivery
 7. **International shipping** is 14 days
+8. **Affiliate commissions** only on renewals, not initial payment
+9. **$50 minimum** for affiliate payouts
+10. **Self-referral blocked** - cannot use own referral code
 
 ---
 
@@ -306,3 +343,5 @@ Is it within 30 days?
 - [Refund Process](../processes/refund-process.md)
 - [Shipping & Fulfillment](../processes/device-fulfillment.md)
 - [Support Workflow](../processes/support-workflow.md)
+- [Affiliate Program](../features/affiliate/program.md)
+- [Affiliate Commission Process](../processes/affiliate-commission.md)

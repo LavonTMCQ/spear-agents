@@ -57,6 +57,16 @@ User Interface → Authentication → Payment Processing → Subscription Manage
 3. **Payment Overdue** → Device Access Revoked
 4. **Admin Intervention** → Manual Resolution
 
+### Affiliate Marketing System
+- **Program**: Clients earn $25/month per active referred subscriber
+- **Referral Codes**: Format `SPEAR-XXXXXX`, unique per affiliate
+- **Commission Trigger**: Only on renewals (not initial payment), first commission after 30+ days
+- **7-Day Hold**: Commissions held 7 days before approval (fraud protection)
+- **Payout**: $50 minimum, manual PayPal payout by admin
+- **Client Dashboard**: `/dashboard/affiliate` (activate, track referrals, view earnings, request payouts)
+- **Admin Dashboard**: `/admin/affiliates` (manage affiliates, process payouts, configure settings)
+- **Safeguards**: Self-referral blocked, duplicate referral prevention, commission reversal on refunds
+
 ### Device Access Control
 ```typescript
 // Business rule: Access tied to payment status
@@ -209,6 +219,9 @@ vercel env ls
 - **Admin Dashboard**: `src/app/admin/clients/page.tsx`
 - **Database Schema**: `prisma/schema.prisma`
 - **Auth Config**: `src/lib/auth.ts`
+- **Affiliate Logic**: `src/lib/affiliate/` (commission.ts, referral.ts, utils.ts)
+- **Affiliate Client Page**: `src/app/dashboard/affiliate/page.tsx`
+- **Affiliate Admin Page**: `src/app/admin/affiliates/page.tsx`
 
 ## 🔄 MAINTENANCE SCHEDULE
 

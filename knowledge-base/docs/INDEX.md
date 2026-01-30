@@ -1,6 +1,6 @@
 # SPEAR Documentation Index
 
-> **Last Updated**: 2025-01-20 | **Version**: 1.0 | **Status**: Active
+> **Last Updated**: 2026-01-30 | **Version**: 1.1 | **Status**: Active
 
 ---
 
@@ -18,6 +18,7 @@
 | Help with BYOD setup | [BYOD Setup](./features/device/byod-setup.md) |
 | Pair a device | [Device Pairing](./features/device/device-pairing.md) |
 | Furnished device setup | [Device Setup Guide](./features/DEVICE_SETUP_GUIDE.md) |
+| Learn about affiliate program | [Affiliate Program](./features/affiliate/program.md) |
 | Use the admin dashboard | [Admin Guide](#admin-dashboard) |
 | Integrate with API | [API Reference](#api-reference) |
 | Understand business processes | [Processes](#business-processes) |
@@ -76,6 +77,9 @@
 | "How do I cancel?" | [Subscription Cancellation](./features/subscription/cancellation.md) |
 | "Where is my device?" | [Order Tracking](./features/orders/tracking.md) |
 | "What's included?" | [Pricing Reference](./reference/pricing.md) |
+| "How does the affiliate program work?" | [Affiliate Program](./features/affiliate/program.md) |
+| "Where is my referral code?" | [Affiliate Program](./features/affiliate/program.md) |
+| "When do I get my affiliate payout?" | [Commission Process](./processes/affiliate-commission.md) |
 
 ### Customer Lookup
 
@@ -114,6 +118,13 @@ To find customer information:
 | [Grace Period](./features/subscription/grace-period.md) | Feature | 7-day payment grace |
 | [Dunning](./processes/dunning.md) | Process | Failed payment recovery |
 
+### Affiliate Program
+| Document | Type | Description |
+|----------|------|-------------|
+| [Affiliate Program](./features/affiliate/program.md) | Feature | Complete affiliate system overview |
+| [Commission Process](./processes/affiliate-commission.md) | Process | Commission accrual, hold, approval, payout |
+| [Affiliate API](./api/affiliate/endpoints.md) | API | All affiliate endpoints (client + admin) |
+
 ### Device Management
 | Document | Type | Description |
 |----------|------|-------------|
@@ -140,6 +151,7 @@ To find customer information:
 | [Client Dashboard](./features/client/dashboard.md) | Feature | Client home |
 | [My Devices](./features/client/devices.md) | Feature | Device management |
 | [My Subscription](./features/client/subscription.md) | Feature | Subscription view |
+| [Affiliate Program](./features/affiliate/program.md) | Feature | Referral code, earnings, payouts |
 | [Profile Settings](./features/client/profile.md) | Feature | Account settings |
 
 ---
@@ -162,6 +174,17 @@ To find customer information:
 | [/api/paypal/capture-payment](./api/payment/capture-payment.md) | POST | Capture payment |
 | [/api/paypal/webhook](./api/payment/webhook.md) | POST | PayPal webhooks |
 | [/api/coupons/validate](./api/payment/validate-coupon.md) | POST | Validate coupon |
+
+### Affiliate APIs
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| [/api/affiliate/profile](./api/affiliate/endpoints.md) | GET/POST | Client affiliate profile |
+| [/api/affiliate/stats](./api/affiliate/endpoints.md) | GET | Affiliate performance stats |
+| [/api/affiliate/referrals](./api/affiliate/endpoints.md) | GET | Referral list |
+| [/api/affiliate/earnings](./api/affiliate/endpoints.md) | GET | Monthly earnings breakdown |
+| [/api/affiliate/payouts](./api/affiliate/endpoints.md) | GET/POST | Payout history + request |
+| [/api/affiliate/payout-method](./api/affiliate/endpoints.md) | PUT | Update payout email |
+| [/api/admin/affiliates/*](./api/affiliate/endpoints.md) | Various | Admin affiliate management |
 
 ### Subscription APIs
 | Endpoint | Method | Description |
@@ -195,6 +218,7 @@ To find customer information:
 | Process | Description | Document |
 |---------|-------------|----------|
 | **Payment Flow** | User checkout to subscription activation | [payment-flow.md](./processes/payment-flow.md) |
+| **Affiliate Commission** | Referral → Renewal → Commission → Payout | [affiliate-commission.md](./processes/affiliate-commission.md) |
 | **Subscription Lifecycle** | Signup → Billing → Renewal/Cancellation | [subscription-lifecycle.md](./processes/subscription-lifecycle.md) |
 | **Device Fulfillment** | Order → Ship → Deliver → Activate | [device-fulfillment.md](./processes/device-fulfillment.md) |
 | **Refund Processing** | Request → Review → Process → Notify | [refund-process.md](./processes/refund-process.md) |
@@ -290,10 +314,10 @@ load_docs:
 
 | Agent | Must-Load Files |
 |-------|-----------------|
-| All | `GLOSSARY.md`, `reference/pricing.md` |
-| Support | `troubleshooting/*`, `features/client/*` |
-| Ops | `processes/*`, `guides/admin/*` |
-| Sales | `reference/pricing.md`, `features/subscription/*` |
+| All | `GLOSSARY.md`, `reference/pricing.md`, `reference/business-rules.md` |
+| Support | `troubleshooting/*`, `features/client/*`, `features/affiliate/*` |
+| Ops | `processes/*`, `guides/admin/*`, `api/affiliate/*` |
+| Sales | `reference/pricing.md`, `features/subscription/*`, `features/affiliate/*` |
 
 ---
 
